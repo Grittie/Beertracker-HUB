@@ -5,7 +5,7 @@ theme:
     custom_dir: mdocotion/
     sidebar_color: '#f1f5f9'
     logo: assets/logo.svg
-    favicon: "docs/assets/new_favicon.ico"
+    favicon: "../docs/assets/new_favicon.ico"
     features:
         - navigation.sections
         - content.tabs.link
