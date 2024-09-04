@@ -8,6 +8,7 @@ Nowadays, time registration devices are often available as websites or mobile ap
 
 ## Project Requirements
 <img src="assets/initial_sketch.jpg" alt="Alt text" width="500" />
+
 (image will be changed  when better sketches are available)
 
 ### Embedded Device
@@ -15,13 +16,19 @@ For this project, the WEMOS, along with other devices, will serve as the core co
 
 #### The 3 minimum requirement for Input & Ouput are:
 **INPUT:**
+
 1. RFID Scanner
+
 2. Buttons for increment and decrement (plus & minus)
+
 3. On / Off Switch
 
 **Output:**
+
 1. LED Indicators
+
 2. LCD Screen
+
 3. Passive Buzzer
 
 ### Website
