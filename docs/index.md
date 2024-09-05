@@ -7,7 +7,7 @@ The Smart Time Registration device is a tool used to track the ammount of time a
 Nowadays, time registration devices are often available as websites or mobile apps. These tools can not only track overall work hours but also allow users to log time spent on specific tasks or projects. This tracking is then used for billing purposes, project management, and ensuring accurate payroll processing.
 
 ## Project Requirements
-<img src="assets/initial_sketch.jpg" alt="Alt text" width="500" />
+<img src="assets/images/initial_sketch.jpg" alt="Alt text" width="500" />
 
 (image will be changed  when better sketches are available)
 
