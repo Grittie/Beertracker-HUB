@@ -40,11 +40,11 @@ The website will implement user registration using HVA IDs and passwords. Users 
 The device will be housed in a compact enclosure designed using CAD, with the software OnShape.
 
 ## Our own flavor
-Once the blueprint requirements are met, the device will be changed adding our own flavor and features. For example, a counter registration system will be integrated to track beverages, which will be added to a user database when they scan their pass. The device will also be integrated into a already running project "BeverageTracker". 
+Once the blueprint requirements are met, the device will be changed adding our own flavor and features. For example, a counter registration system will be integrated to track beverages, which will be added to a user database when they scan their pass. The device will also be integrated into a already running project "BeerTracker". 
 
-## What is BeverageTracker?
+## What is BeerTracker?
 
-Beverage tracker is a website designed, made and managed by Lars Grit for his class at the University of Applied Science of Amsterdam to keep a track of how many beverages have been bought and drank to avoid the classic tradition of "tikkies". Using the beveragetracker the class is made aware of how much people are chipping in to keep the drinks even.
+BeerTracker is a website designed, made and managed by Lars Grit for his class at the University of Applied Science of Amsterdam to keep a track of how many beers have been bought and drank to avoid the classic tradition of "tikkies". Using the BeerTracker the class is made aware of how much people are chipping in to keep the drinks even.
 
 During the implementation of this device the website will be heavily changed and updated.
 
