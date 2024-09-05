@@ -56,8 +56,10 @@ void loop() {
   cardScanned = true;
   cardPresent = true;
   
-  // Turn on the LED to indicate the card is being processed
+  // Turn on the LED to indicate the card is being processed/
+  // Keep led on for a seconds
   digitalWrite(LED_PIN, HIGH);
+  delay(1000);
 
   // Halt PICC to prevent repeated scans until the card is removed
   mfrc522.PICC_HaltA();
