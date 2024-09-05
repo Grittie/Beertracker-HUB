@@ -2,7 +2,8 @@
 #include <MFRC522.h>
 #define SS_PIN 15
 #define RST_PIN 2
-#define LED_PIN 3
+#define LED_PIN 4
+#define BUZZER_PIN 16
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
@@ -12,6 +13,8 @@ void setup() {
   mfrc522.PCD_Init();   // Initiate MFRC522
   pinMode(LED_PIN, OUTPUT);  // Set LED pin as output
   digitalWrite(LED_PIN, LOW); // Ensure LED is off initially
+  pinMode(BUZZER_PIN, OUTPUT);
+  tone(BUZZER_PIN, 1000, 2000);
 }
 
 bool cardScanned = false;  // Flag to check if card has been scanned
@@ -58,9 +61,15 @@ void loop() {
   
   // Turn on the LED to indicate the card is being processed/
   // Keep led on for a seconds
+  // Turn on Buzzer
+  tone(BUZZER_PIN, 523); // C4
+  delay(100);
+  noTone(BUZZER_PIN);
+  tone(BUZZER_PIN, 784); // G4
+  delay(100);
+  noTone(BUZZER_PIN);
   digitalWrite(LED_PIN, HIGH);
   delay(1000);
-
   // Halt PICC to prevent repeated scans until the card is removed
   mfrc522.PICC_HaltA();
 }
