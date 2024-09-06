@@ -95,8 +95,7 @@ This document outlines the hardware *and* functional requirements for the **Smar
 
 **Code**:
 ```cpp
-// Example code for sending sensor data via HTTP
-[Insert code snippet(s) proving the requirement is fulfilled here]
+// lorem ipsum
 ```
 
 ---
@@ -110,8 +109,7 @@ This document outlines the hardware *and* functional requirements for the **Smar
 
 **Code**:
 ```cpp
-// Example code for receiving status messages via HTTP
-[Insert code snippet(s) proving the requirement is fulfilled here]
+// lorem ipsum
 ```
 
 ---
