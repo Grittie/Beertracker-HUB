@@ -2,7 +2,7 @@
 #include <MFRC522.h>
 
 #define SS_PIN 10        // SDA/SS Pin
-#define RST_PIN 1        // Reset Pin
+#define RST_PIN 41       // Reset Pin
 #define LED_PIN 18       // LED Pin
 #define BUZZER_PIN 16    // Buzzer Pin
 
