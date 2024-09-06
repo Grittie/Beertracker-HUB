@@ -1,17 +1,18 @@
 #include <SPI.h>
 #include <MFRC522.h>
-#define SS_PIN 15
-#define RST_PIN 2
-#define LED_PIN 4
-#define BUZZER_PIN 16
+
+#define SS_PIN 10        // SDA/SS Pin
+#define RST_PIN 1        // Reset Pin
+#define LED_PIN 18       // LED Pin
+#define BUZZER_PIN 16    // Buzzer Pin
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 void setup() {
   Serial.begin(115200);
-  SPI.begin();          // Initiate SPI bus
-  mfrc522.PCD_Init();   // Initiate MFRC522
-  pinMode(LED_PIN, OUTPUT);  // Set LED pin as output
+  SPI.begin(36, 37, 35, 10);  // SCK = 36, MISO = 37, MOSI = 35, SS = 10
+  mfrc522.PCD_Init();         // Initialize MFRC522
+  pinMode(LED_PIN, OUTPUT);   // Set LED pin as output
   digitalWrite(LED_PIN, LOW); // Ensure LED is off initially
   pinMode(BUZZER_PIN, OUTPUT);
   tone(BUZZER_PIN, 1000, 2000);
@@ -59,8 +60,8 @@ void loop() {
   cardScanned = true;
   cardPresent = true;
   
-  // Turn on the LED to indicate the card is being processed/
-  // Keep led on for a seconds
+  // Turn on the LED to indicate the card is being processed
+  // Keep LED on for a second
   // Turn on Buzzer
   tone(BUZZER_PIN, 523); // C4
   delay(100);
@@ -70,6 +71,7 @@ void loop() {
   noTone(BUZZER_PIN);
   digitalWrite(LED_PIN, HIGH);
   delay(1000);
+  
   // Halt PICC to prevent repeated scans until the card is removed
   mfrc522.PICC_HaltA();
 }
