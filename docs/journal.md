@@ -30,8 +30,27 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 **Feedback:** It looks like a realy good page for your system requirement, realy detailed and covers all the parts of your system. Be sure to check them to yes when you finish one and also add the description with code on how you solved the problem!
 
-**Takeaway** I should often revisit this page and see whether I've finished a requirement and properly document it when I do.
+**Takeaway:** I should often revisit this page and see whether I've finished a requirement and properly document it when I do.
+
+<br>
 
 
 ## Week 2
-TBD
+### Feedback
+**🧰 Technical Documentations** 
+
+**Reviewer:** Koen Lammers
+
+**Feedback:** 
+
+**Takeaway:** 
+
+<br>
+
+**🌐 Database** 
+
+**Reviewer:** Melvin Moes
+
+**Feedback:** Looks good except for some information is redundant. The datatypes should be excluded and the identifier should be underlined. (ERD)
+
+**Takeaway:** I should change the ERD and remove datatypes and underline identifiers, these steps should be implemented in the EER instead only.
