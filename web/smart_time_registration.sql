@@ -46,3 +46,22 @@ CREATE TABLE InternalTemperature (
     Temperature FLOAT NOT NULL
 );
 
+INSERT INTO Users (Name, Role) 
+VALUES ('Bob', 'Employee'), ('Alice', 'Manager');
+
+INSERT INTO Cards (UserID, RFID_Tag, Status, IssueDate, ExpiryDate)
+VALUES 
+(1, '12345ABC', 'Active', '2024-09-08', NULL),
+(2, '67890XYZ', 'Active', '2024-09-08', NULL);
+
+INSERT INTO WorkSessions (UserID, ClockInTime, ClockOutTime)
+VALUES 
+(1, '2024-09-08 08:00:00', '2024-09-08 17:00:00'),
+(2, '2024-09-08 09:00:00', '2024-09-08 18:00:00');
+
+INSERT INTO AttendanceLogs (CardID, Timestamp, EventType)
+VALUES 
+(1, '2024-09-08 08:00:00', 'Clock In'),
+(2, '2024-09-08 09:00:00', 'Clock In'),
+(1, '2024-09-08 17:00:00', 'Clock Out'),
+(2, '2024-09-08 18:00:00', 'Clock Out');
