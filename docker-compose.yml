@@ -7,9 +7,11 @@ services:
     volumes:
       - './web:/var/www/html'
       - './docker/dashboard:/var/www/dashboard'
+      - './.env:/var/www/.env'
     depends_on:
       - mariadb
-  
+    command: bash -c "composer install && php-fpm"
+
   nginx:
     image: nginx:latest
     container_name: iot-nginx
