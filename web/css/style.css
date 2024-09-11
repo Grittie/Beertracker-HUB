@@ -27,3 +27,7 @@ tr:nth-child(even) {
 #database-connection.failed {
     color: red;
 }
+
+body {
+    font-family: 'SUSE', sans-serif;
+}
