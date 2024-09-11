@@ -21,25 +21,13 @@ $dbConnection = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
 // Check the connection
 if ($dbConnection->connect_error) {
-    echo json_encode(array(
+    die(json_encode(array(
         "success" => false,
         "error" => $dbConnection->connect_error,
         "host" => $dbHost,
         "user" => $dbUser,
         "database" => $dbName,
         "directoryPath" => $directoryPath
-    ));
-} else {
-    echo json_encode(array(
-        "success" => true,
-        "message" => "Connection successful",
-        "host" => $dbHost,
-        "user" => $dbUser,
-        "database" => $dbName,
-        "directoryPath" => $directoryPath
-    ));
+    )));
 }
-
-// Close the connection
-$dbConnection->close();
 ?>

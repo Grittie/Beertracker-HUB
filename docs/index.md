@@ -97,7 +97,7 @@ Throughout the duration of the project, I will be working on various aspects in 
 - Gather and implement feedback from peers, teachers, and potential users to fine-tune the system.
 
 ### **Week 10: Project Finalization**
-- Finalize the project, ensuring all features are tested, the device is functioning as intended, everything is documented, and everything is ready for production.
+- Finalize the project, ensuring all features are tested, the device is functioning as intended, everything is documented, `and everything is ready for production.
 
 --- 
 
