@@ -6,35 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Time Registration</title>
 
+    <!-- Links for SUSE Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SUSE&display=swap" rel="stylesheet">
 
-
+    <!-- Link to local stylesheet and java script -->
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js"></script>
-    
+    <script src="js/script.js" defer></script>
 </head>
 
 <body>
+    <!-- Check database connection -->
     <p>Database <span id="database-connection"></span> connection.</p>
+
     <h1>Smart Time Registration</h1>
-    <table>
+    
+    <!-- Table showing user information -->
+    <h2>Users Table</h2>
+    <table id="users-table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Duration</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Card ID</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>{{ timeRegistration.id }}</td>
-                <td>{{ timeRegistration.startTime }}</td>
-                <td>{{ timeRegistration.endTime }}</td>
-                <td>{{ timeRegistration.duration }}</td>
-            </tr>
+        <tbody id="users">
         </tbody>
     </table>
 </body>
