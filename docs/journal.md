@@ -20,7 +20,7 @@ I then moved my focus to writing the required documentation for the work I've do
 I took an LCD to start learning this, I looked up the datasheet where I was able to find the dimensions of the device and started sketching that out in OnShape where I could then design an enclosement around it.
 
 <img src="../assets/images/learningjournal/datasheetlcd.png" alt="Datasheet of the LCD" width="200" />
-<img src="../assets/images/learningjournal/cadlcd.png" alt="Cadding of the enclosement" width="500" />
+<img src="../assets/images/learningjournal/cadLCD.png" alt="Cadding of the enclosement" width="500" />
 
 
 ### Feedback
