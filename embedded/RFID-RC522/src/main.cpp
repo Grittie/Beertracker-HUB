@@ -14,6 +14,10 @@ volatile bool cardDetected = false;
 // Variable to store the card UID in hexadecimal format (e.g. "DEADBEEF") 
 String cardUID = ""; 
 
+// Forward declarations of task functions
+void rfidTask(void * pvParameters);
+void feedbackTask(void * pvParameters);
+
 void setup() {
   Serial.begin(115200);           // Start serial communication for debugging
   SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
@@ -78,7 +82,8 @@ void feedbackTask(void * pvParameters) {
       digitalWrite(LED_PIN, LOW);
       cardDetected = false;  // Reset flag after feedback is given
     }
-
+        
+    // Delay between checks
     vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
   }
 }
