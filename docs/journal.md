@@ -24,7 +24,7 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 
 ### Feedback
-**🧰 System Requirements** 
+**🧰 System Requirements** (solved)
 
 **Reviewer:** Koen Lammers
 
@@ -39,17 +39,17 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non maximus lectus. In eleifend nibh nibh. Morbi erat justo, suscipit non rutrum a, venenatis auctor metus. Vestibulum vitae tellus eget purus commodo congue. Maecenas id nunc at mauris dictum ornare ac eget libero. In tincidunt condimentum arcu. Aenean condimentum auctor faucibus. Nullam id euismod justo, id laoreet magna. Sed urna ipsum, dignissim in nulla ac, dictum pulvinar felis. Nam eget molestie arcu.
 
 ### Feedback
-**🧰 Technical Documentations** 
+**🧰 Technical Documentations** (unsolved)
 
-**Reviewer:** Koen Lammers
+**Reviewer:** Melvin Moes
 
-**Feedback:** 
+**Feedback:** Looks good maybe add the prices to the component list. This way you could show a total price of making your system
 
-**Takeaway:** 
+**Takeaway:** I should add a column with prices, even though Melvin did not mention it I should change the BOM to places where I can purchase one from instead of where I got it. I should remove the HvA as supplier for example.
 
 <br>
 
-**🌐 Database** 
+**🌐 Database** (unsolved)
 
 **Reviewer:** Melvin Moes
 
