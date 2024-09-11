@@ -56,3 +56,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non maximus lectu
 **Feedback:** Looks good except for some information is redundant. The datatypes should be excluded and the identifier should be underlined. (ERD)
 
 **Takeaway:** I should change the ERD and remove datatypes and underline identifiers, these steps should be implemented in the EER instead only.
+
+<br>
+
+**🌐 Technical Documentation** (unsolved)
+
+**Reviewer:** Nick Schokker
+
+**Feedback:** I like the structure of your technical documentation but i would say you can improve if you give a few visual example so its better to understand with the text
+
+**Takeaway:**  I should add short and concise code snippet to the technical doc aswell to make it more readable.
+
+
