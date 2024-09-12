@@ -43,7 +43,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non maximus lectu
 
 **Reviewer:** Melvin Moes
 
-**Feedback:** Looks good maybe add the prices to the component list. This way you could show a total price of making your system
+**Feedback:** Looks good maybe add the prices to the component list. This way you could show a total price of making your system.
 
 **Takeaway:** I should add a column with prices, even though Melvin did not mention it I should change the BOM to places where I can purchase one from instead of where I got it. I should remove the HvA as supplier for example.
 
