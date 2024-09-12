@@ -1,18 +1,24 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
+#include <SPI.h>
 
-// put function declarations here:
-int myFunction(int, int);
+
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  // Initialize the LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setBacklight(HIGH);
+  lcd.setCursor(0, 0);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  lcd.setContrast(0);
+  lcd.print("Hello, world!");
+  delay(1000);
+  lcd.clear();
+  delay(1000);
 }
