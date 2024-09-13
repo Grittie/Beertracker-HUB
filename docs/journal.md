@@ -36,7 +36,24 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 
 ## Week 2
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non maximus lectus. In eleifend nibh nibh. Morbi erat justo, suscipit non rutrum a, venenatis auctor metus. Vestibulum vitae tellus eget purus commodo congue. Maecenas id nunc at mauris dictum ornare ac eget libero. In tincidunt condimentum arcu. Aenean condimentum auctor faucibus. Nullam id euismod justo, id laoreet magna. Sed urna ipsum, dignissim in nulla ac, dictum pulvinar felis. Nam eget molestie arcu.
+Week two started with writing out my learning journal and figuring out how to tackle the feedback and also writing out a project plan with weekly goals and aspirations. This week was a lot of work building the website and making the required steps to achieve it. I started with the database where I used UML to figure out what data was required of this project to be in a database and sketched out an ERD. When that looked good I started making the EERD in *MySQL Database* from which I could generate my database.
+
+<img src="../../assets/images/web/database/EER.png" alt="EER of website" width="250" />
+
+
+With the database up and running it was time to start working on the website, this had to be done with the PHP, JS and HTML + CSS for styling. Using PHP I could make query's and calls to my database and encode it withing JSON which JS can fetch and work out it's information with it. I created a connection check that checks if the website has connection to the database and created a table which prints out all the users and their associated pass UID. 
+
+<img src="../../assets/images/learningjournal/website.png" alt="Screenshot of the website" width="500" />
+
+To secure the website and database I didn't want to have my credentials hard coded into the websites code so I had to learn how to expand my docker to install composer from which I could then install php packages like DOTENV which made it possible for me to store my database credentials in an only local file so other people could not have access to it.
+
+Having created a solid basis for the website I expanded my embedded part by adding a new output, the lcd screen. Getting it to work was a lot of trial and error. I used the i2c backpack which I had to solder unto the lcd screen itself. Using this I significantly lowered the amount of pins required to get the LCD display to work. My biggest struggle was to get the lcd display sufficiently powered since it requires 5v and the esp32 only has 3.3v output pins. This required me to use the 9v battery included in the IoT kit but not wanting to overpower the display I had to come to a solution to get the power from 9v to 5v for which I used a mini DCDC converter which gave me an output of 5v. 
+
+<img src="add-image-of-dcdc-setup" alt="setup" width="500" />
+
+Lastly I have gotten my esp32 connected to the wifi using a wifi manager which makes it so I again don't have any potential important info saved in the code. I sketched out some more designs for my device and thought of fun additions and created the basis for my API. Which will handle the data calls from device to device.
+
+<img src="../../assets/images/learningjournal/sketch2.png" alt="second sketch of the device" width="500" />
 
 ### Feedback
 **🧰 Technical Documentations** (unsolved)
@@ -46,6 +63,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non maximus lectu
 **Feedback:** Looks good maybe add the prices to the component list. This way you could show a total price of making your system.
 
 **Takeaway:** I should add a column with prices, even though Melvin did not mention it I should change the BOM to places where I can purchase one from instead of where I got it. I should remove the HvA as supplier for example.
+
+<br>
+
+**🧰 Technical Documentations** (unsolved)
+
+**Reviewer:** Koen Lammers
+
+**Feedback:** 
+
+**Takeaway:** 
 
 <br>
 
