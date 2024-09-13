@@ -70,9 +70,9 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 
 **Reviewer:** Koen Lammers
 
-**Feedback:** 
+**Feedback:** Be sure to add the url to the store pages! the rest looks clean and good!
 
-**Takeaway:** 
+**Takeaway:** I should make sure to add links to the suppliers in the BOM to redirect them to the product.
 
 <br>
 
@@ -94,4 +94,6 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 
 **Takeaway:**  I should add short and concise code snippet to the technical doc aswell to make it more readable.
 
+<br>
 
+## Week 3
