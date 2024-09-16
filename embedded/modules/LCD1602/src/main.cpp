@@ -15,7 +15,7 @@ void setup() {
 }
 
 void loop() {
-  lcd.setContrast(0);
+  lcd.setContrast(0);```
   lcd.print("Hello, world!");
   delay(1000);
   lcd.clear();
