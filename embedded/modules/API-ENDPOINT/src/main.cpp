@@ -5,7 +5,7 @@
 
 const float humidity = 0.81;
 const float temperature = 10.3;
-const char* serverURL = "http://localhost/php/api.php";  // Make sure this is the correct URL
+const char* serverURL = "http://192.168.201.85/php/api.php";  // Make sure this is the correct URL
 
 void sendSensorData(float temperature, float humidity) {
     if (WiFi.status() == WL_CONNECTED) {
@@ -65,7 +65,7 @@ void setup() {
     WiFiManager wifiManager;
 
     // This line resets saved Wi-Fi credentials
-    wifiManager.resetSettings();
+    // wifiManager.resetSettings();
 
     // Changes the theme to dark mode in the Wi-Fi config portal
     wifiManager.setClass("invert");
