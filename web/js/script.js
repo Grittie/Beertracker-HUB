@@ -4,6 +4,9 @@ window.addEventListener('load', function() {
 
     // Fetch user data and update the UI
     fetchUserData();
+
+    // Fetch sensor data and update the UI
+    fetchSensorData();
 });
 
 // Function to fetch the connection status and update the UI
@@ -21,7 +24,6 @@ function fetchConnectionStatus() {
                 connectionStatus.className = "failed";
             }
         })
-        // Catch any errors and log them to the console
         .catch(error => {
             console.error('Error:', error);
             const connectionStatus = document.getElementById('database-connection');
@@ -32,7 +34,6 @@ function fetchConnectionStatus() {
 
 // Function to fetch user data and put it in the user table
 function fetchUserData() {
-    // Fetch user data from the server
     fetch('php/get_time_registration.php')
         .then(response => response.json())
         .then(data => {
@@ -40,7 +41,6 @@ function fetchUserData() {
             usersTableBody.innerHTML = '';
 
             if (data.success) {
-                // Create and append user rows
                 data.users.forEach(user => {
                     const row = document.createElement('tr');
                     
@@ -63,7 +63,6 @@ function fetchUserData() {
                     usersTableBody.appendChild(row);
                 });
             } else {
-                // Display an error message
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
                 cell.colSpan = 4;
@@ -72,7 +71,6 @@ function fetchUserData() {
                 usersTableBody.appendChild(row);
             }
         })
-        // Catch any errors and log them to the console
         .catch(error => {
             console.error('Error:', error);
             const row = document.createElement('tr');
@@ -84,5 +82,37 @@ function fetchUserData() {
         });
 }
 
-// Call the function to fetch user data
-fetchUserData();
+// Function to fetch sensor data and update the UI
+function fetchSensorData() {
+    // Create a POST request to send the 'type' as 'sensor_data'
+    fetch('php/sensor_data.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            type: 'sensor_data',
+            humidity: 55,  // These are example values, replace with actual sensor data
+            temperature: 24
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const temperatureDisplay = document.getElementById('temperature-display');
+        const humidityDisplay = document.getElementById('humidity-display');
+        
+        if (data.temperature && data.humidity) {
+            temperatureDisplay.textContent = data.temperature;
+            humidityDisplay.textContent = data.humidity;
+        } else {
+            temperatureDisplay.textContent = 'N/A';
+            humidityDisplay.textContent = 'N/A';
+            console.error('Error fetching sensor data:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('temperature-display').textContent = 'N/A';
+        document.getElementById('humidity-display').textContent = 'N/A';
+    });
+}

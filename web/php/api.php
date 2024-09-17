@@ -1,58 +1,29 @@
 <?php
-// Debugging: Print all POST data
-error_log(print_r($_POST, true));  // Logs POST data to the server's error log
+require_once 'db_connect.php';
 
-// Check if the 'type' key is set in the POST data
-if (!isset($_POST["type"])) {
-    echo json_encode(array(
-        "error" => "Missing 'type' parameter"
-    ));
-    exit();
+// Get POST data
+$type = $_POST["type"] ?? null;
+$humidity = $_POST["humidity"] ?? null;
+$temperature = $_POST["temperature"] ?? null;
+
+if ($type === 'sensor_data') {
+    // Prepare and bind
+    $stmt = $dbConnection->prepare("INSERT INTO InternalTemperature (timestamp, temperature, humidity) VALUES (NOW(), ?, ?)");
+    $stmt->bind_param("dd", $temperature, $humidity);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        echo json_encode(array("status" => "success"));
+    } else {
+        echo json_encode(array("status" => "error", "message" => $stmt->error));
+    }
+
+    // Close the statement
+    $stmt->close();
+} else {
+    echo json_encode(array("error" => "Invalid type"));
 }
 
-// Get the request type to determine which data is being sent
-$type = $_POST["type"];
-
-switch($type) {
-    case 'sensor_data':
-        // Check if 'humidity' and 'temperature' are set
-        if (isset($_POST["humidity"]) && isset($_POST["temperature"])) {
-            $humidity = $_POST["humidity"];
-            $temperature = $_POST["temperature"];
-            echo json_encode(array(
-                "temperature" => $temperature,
-                "humidity" => $humidity
-            ));
-        } else {
-            echo json_encode(array(
-                "error" => "Missing 'humidity' or 'temperature' parameter"
-            ));
-        }
-        break;
-
-    case 'time_registration':
-        // Check if 'uid', 'time', and 'action' are set
-        if (isset($_POST["uid"]) && isset($_POST["time"]) && isset($_POST["action"])) {
-            $uid = $_POST["uid"];
-            $time = $_POST["time"];
-            $action = $_POST["action"];
-            echo json_encode(array(
-                "uid" => $uid,
-                "time" => $time,
-                "action" => $action
-            ));
-        } else {
-            echo json_encode(array(
-                "error" => "Missing 'uid', 'time', or 'action' parameter"
-            ));
-        }
-        break;
-
-    default:
-        // If no valid type is given, return an error
-        echo json_encode(array(
-            "error" => "Invalid request type"
-        ));
-        break;
-}
+// Close the connection
+$dbConnection->close();
 ?>

@@ -43,7 +43,8 @@ CREATE TABLE AttendanceLogs (
 CREATE TABLE InternalTemperature (
     TempLogID INT AUTO_INCREMENT PRIMARY KEY,
     Timestamp DATETIME NOT NULL,
-    Temperature FLOAT NOT NULL
+    Temperature FLOAT NOT NULL,
+    Humidity FLOAT NOT NULL
 );
 
 INSERT INTO Users (Name, Role) 
