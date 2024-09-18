@@ -4,36 +4,52 @@
 #include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <MFRC522.h>
+#include <DHT.h>
+#include <Adafruit_Sensor.h>
 
 // Pin definitions
-#define SS_PIN 10        // SDA/SS Pin for SPI
-#define RST_PIN 41       // Reset Pin for RFID
-#define LED_PIN 18       // LED Pin
-#define BUZZER_PIN 16    // Buzzer Pin
+#define SS_PIN 10           // SDA/SS Pin for SPI
+#define RST_PIN 41          // Reset Pin for RFID
+#define SCAN_LED 18         // LED Pin
+#define CONNECTION_LED 15   // LED Pin
+#define BUZZER_PIN 16       // Buzzer Pin
+#define DECREASE_BUTTON 20  // Button Pin
+#define INCREASE_BUTTON 21  // Button Pin
+#define TEMP_SENSOR 17       // Analog Pin
+#define DHTTYPE DHT11       // DHT 11 type sensor
+
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
+DHT dht(TEMP_SENSOR, DHTTYPE);    // Create DHT instance
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // Flag to signal when card is detected
-volatile bool cardDetected = false;  
+volatile bool cardDetected = false;
+
 // Variable to store the card UID in hexadecimal format (e.g. "DEADBEEF") 
 String cardUID = ""; 
 
 // Forward declarations of task functions
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
+void temperatureTask(void * pvParameters);
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT); // Set the onboard LED pin as output
+  digitalWrite(LED_BUILTIN, LOW); // Turn off the LED
   // Start serial communication
   Serial.begin(115200);
   SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
   mfrc522.PCD_Init();            // Initialize RFID module
+  dht.begin();                   // Initialize DHT sensor
 
   // Initialize LED and buzzer pins as outputs
-  pinMode(LED_PIN, OUTPUT);       
-  digitalWrite(LED_PIN, LOW);     
+  pinMode(SCAN_LED, OUTPUT);       
+  digitalWrite(SCAN_LED, LOW);    
+  pinMode(CONNECTION_LED, OUTPUT);       
+  digitalWrite(CONNECTION_LED, LOW);          
   pinMode(BUZZER_PIN, OUTPUT);   
 
   // Create a Wi-Fi Manager object
@@ -53,6 +69,7 @@ void setup() {
 
   // If you get here you have connected to the WiFi
   Serial.println("Connected to Wi-Fi");
+  digitalWrite(CONNECTION_LED, HIGH);
 
   // Initialize the LCD
   lcd.init();
@@ -63,6 +80,7 @@ void setup() {
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 1, NULL); // Task for feedback (LED/Buzzer)
+  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 1, NULL); // Task for temperature readings
 }
 
 void loop() {
@@ -70,6 +88,7 @@ void loop() {
 
 // Task to continuously scan for RFID cards
 void rfidTask(void * pvParameters) {
+  Serial.println("RFID Task Started");
   while (true) {
     // Check if a new card is present
     if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
@@ -98,32 +117,52 @@ void feedbackTask(void * pvParameters) {
   while (true) {
     if (cardDetected) {
       // Turn on the LED
-      digitalWrite(LED_PIN, HIGH);
+      digitalWrite(SCAN_LED, HIGH);
 
       // Display the card UID on the LCD
-      lcd.setContrast(0);
-      lcd.print("Hello, world!");
-
+      lcd.setCursor(0, 0);
+      lcd.print("UID:" + cardUID);
 
       // Play a sound
-      // TODO: Improve this code.
       tone(BUZZER_PIN, 523);  // Play tone C4
-      delay(100);             // Delay for 100 ms
+      delay(100);             
       noTone(BUZZER_PIN);
       tone(BUZZER_PIN, 784);  // Play tone G4
       delay(100);
       noTone(BUZZER_PIN);
 
+      // Keep the text visible for a short period
+      delay(2000);  // Wait 2 seconds
 
       // Clear the LCD
       lcd.clear();
 
       // Turn off the LED
-      digitalWrite(LED_PIN, LOW);
+      digitalWrite(SCAN_LED, LOW);
       cardDetected = false;  // Reset flag after feedback is given
     }
         
     // Delay between checks
     vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
+  }
+}
+
+// Task to continuously read the temperature
+void temperatureTask(void * pvParameters) {
+  while (true) {
+    // Read temperature from DHT sensor
+    float temperature = dht.readTemperature();
+    
+    // Check if the reading is valid
+    if (isnan(temperature)) {
+      Serial.println("Failed to read from DHT sensor!");
+    } else {
+      Serial.print("Temperature: ");
+      Serial.print(temperature);
+      Serial.println("°C");
+    }
+    
+    // Delay for 30 seconds (30000 ms)
+    vTaskDelay(30000 / portTICK_PERIOD_MS);
   }
 }
