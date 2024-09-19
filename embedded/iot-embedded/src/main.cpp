@@ -50,13 +50,13 @@ void setup() {
   digitalWrite(SCAN_LED, LOW);    
   pinMode(CONNECTION_LED, OUTPUT);       
   digitalWrite(CONNECTION_LED, LOW);          
-  pinMode(BUZZER_PIN, OUTPUT);   
+  pinMode(BUZZER_PIN, OUTPUT);  
 
   // Create a Wi-Fi Manager object
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  wifiManager.resetSettings();
+  // wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
@@ -79,8 +79,8 @@ void setup() {
 
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
-  xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 1, NULL); // Task for feedback (LED/Buzzer)
-  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 1, NULL); // Task for temperature readings
+  xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
+  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
 }
 
 void loop() {
@@ -131,14 +131,14 @@ void feedbackTask(void * pvParameters) {
       delay(100);
       noTone(BUZZER_PIN);
 
+      // Turn off the LED
+      digitalWrite(SCAN_LED, LOW);
+
       // Keep the text visible for a short period
       delay(2000);  // Wait 2 seconds
 
       // Clear the LCD
       lcd.clear();
-
-      // Turn off the LED
-      digitalWrite(SCAN_LED, LOW);
       cardDetected = false;  // Reset flag after feedback is given
     }
         
