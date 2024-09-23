@@ -3,10 +3,9 @@
 ## Wiring Diagram
 ### RFID Scanning system
 ### Breadboard Diagram
-<img src="../../assets/images/RC522/RFID RC522_bb.png" alt="Alt text" width="350" />
-
+<img src="../../assets/images/RC522/RFID RC522_bb.png" alt="Alt text" width="600" />
 ### Schematic Diagram
-<img src="../../assets/images/RC522/RFID RC522_schem.png" alt="Alt text" width="300" />
+<img src="../../assets/images/RC522/RFID RC522_schem.png" alt="Alt text" width="500" />
 
 
 ## BOM
