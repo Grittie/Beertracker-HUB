@@ -34,6 +34,7 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 <br>
 
+---
 
 ## Week 2
 Week two started with writing out my learning journal and figuring out how to tackle the feedback and also writing out a project plan with weekly goals and aspirations. This week was a lot of work building the website and making the required steps to achieve it. I started with the database where I used UML to figure out what data was required of this project to be in a database and sketched out an ERD. When that looked good I started making the EERD in *MySQL Database* from which I could generate my database.
@@ -96,25 +97,42 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 
 <br>
 
+---
+
 ## Week 3
 
 Week 3 started with User Experience Design, by following a laser cutting workshop of Joey. Here I learnt how to use a lasercutting machine and what to look out for. Following this workshop I wanted to do more research in 2d and 3d cadding and followed a tutorial on 2d CADding which I could apply to laser cutting.
 
-<img src="../../assets/images/learningjournal/2d3d.png" alt="2D&3D cadding" width="250" />
+<img src="../../assets/images/learningjournal/2d3d.png" alt="2D&3D cadding" width="400" />
 
 I then worked on embedded and getting it connected to the web, last week I got the esp32 connected to the wifi but now I had to figure out how to get it to send actual data. In php I started setting up the rest API to collect data from the esp32. and on the esp32 I had to figure out how to use post requests to send the data to my website through the API. Next step would be to collect data from the site to the esp32 for displaying user name on the LCD for example.
 
-For the embedded parts I had to figure out how to use capacitors and use it with the DCDC mini converter to get nice stable voltage flowing through the device and convert that batteries 9v to 5v for both powering the esp32 itself but also the DHT11 and LCD.
+For the embedded parts I had to figure out how to use capacitors and use it with the DCDC mini converter to get nice stable voltage flowing through the device and convert that batteries 9v to 5v for both powering the esp32 itself but also the DHT11 and LCD. I also added a DHT11 sensor that every so often updates the system by sending internal temperatures and humidity. Multiple LEDS for status showing power, wifi connection and card scanned and buttons for selecting modes.
 
 Along with updating the proper documentation for it and debugging the embedded hardware and software took two days time aswell.
 
+<img src="../../assets/images/learningjournal/new_fritzing.png" alt="new fritzing diagrams" width="500" />
+
+
 
 ### Feedback
-**👩‍🎨 Concept & Design** (unsolved)
+**👩‍🎨 Concept & Design** (solved)
 
 **Reviewer:** Lucas Hilgevoord 
 
 **Feedback:** I would brothen [broaden] your userbase a bit, so not only 3rd year students, but all the students of HvA. Looks good for the rest!
 
 **Takeaway:** I should change my userbase and scope to make the project available for all hva studenten since they will all have the hva ID's required to make the project.
+
 <br>
+
+**👩‍🎨 Concept & Design** (solved)
+
+**Reviewer:** 
+
+**Feedback:**
+
+**Takeaway:** 
+<br>
+
+---
