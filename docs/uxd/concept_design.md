@@ -1,12 +1,12 @@
 # Concept & Design
 ## Concept
 
-The **Smart Check in / out system** is being developed for [beertracker.nl](http://beertracker.nl) <img src="../../assets/images/logo.png" alt="Alt text" width="100" />, a platform used by third-year HvA TI students. The system helps track beer ordering so that everyone pays equally without needing to request payments after the fact.
+The **Smart Check in / out system** is being developed for [beertracker.nl](http://beertracker.nl) <img src="../../assets/images/logo.png" alt="Alt text" width="100" />, a platform used by HvA students. The system helps track beer ordering so that everyone pays equally without needing to request payments after the fact.
 
 ### Users
-The primary users of this system are third-year HvA Technical Informatics (TI) students. They need a system that can accurately track the order of beer in a fair and automated way, ensuring that payments are distributed equally among all users. 
+The primary users of this system are HvA students. They need a system that can accurately track the order of beer in a fair and automated way, ensuring that payments are distributed equally among all users. 
 #### Scope
-- The system will only be used by HvA TI students in their (current) third year.
+- The system will only be used by HvA students in their (current) third year.
 - The scope includes beer (pitcher) order tracking, clocking in and out of sessions, and easy access to consumption data.
 
 
