@@ -97,3 +97,13 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 <br>
 
 ## Week 3
+
+### Feedback
+**👩‍🎨 Concept & Design** (unsolved)
+
+**Reviewer:** Lucas Hilgevoord 
+
+**Feedback:** I would brothen [broaden] your userbase a bit, so not only 3rd year students, but all the students of HvA. Looks good for the rest!
+
+**Takeaway:** I should change my userbase and scope to make the project available for all hva studenten since they will all have the hva ID's required to make the project.
+<br>
