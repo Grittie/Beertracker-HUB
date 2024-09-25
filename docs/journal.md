@@ -34,6 +34,9 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 <br>
 
+
+## Performance Review Week 1
+<img src="../../assets/images/learningjournal/reviews/IoTw2-Lars.png" alt="performance review" width="500" />
 ---
 
 ## Week 2
@@ -97,6 +100,9 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 
 <br>
 
+## Performance Review Week 2
+<img src="../../assets/images/learningjournal/reviews/IoTw3-Lars.png" alt="performance review" width="500" />
+
 ---
 
 ## Week 3
@@ -134,5 +140,10 @@ Along with updating the proper documentation for it and debugging the embedded h
 
 **Takeaway:** 
 <br>
+
+## Performance Review Week 3
+<img src="../../assets/images/learningjournal/reviews/IoTw3-Lars.png" alt="performance review" width="500" />
+
+Sadly this week I got below average, due to much time spent on learning CAD and working on and debugging hardware I did not have enough commits. Combined with being sick and not attending school on the friday.
 
 ---
