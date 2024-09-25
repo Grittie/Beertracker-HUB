@@ -21,7 +21,7 @@
 | Tactile Push Buttons         | User input buttons                         | 2            | 6mm Tactile Button              | TinyTronics  | €0.20 (each)          | For user interactions (e.g., clock in/out)|
 | Buzzer                       | Audio feedback                             | 1            | Active Buzzer                   | TinyTronics  | €1.00                | Used to signal actions with sound     |
 | Breadboards                  | Prototyping boards                         | 2            | 830 tie-points                  | TinyTronics  | €4.00 (each)          | For quick wiring of components        |
-| Resistor for Orange LED       | Limits current to the orange LED           | 1            | 330Ω Resistor                   | TinyTronics  | €0.05                | Protects the LED from excessive current|
+| Resistor for Orange LED       | Limits current to the orange LED           | 1            | 330Ω Resistor                   | TinyTronics  | €0.05                | Protects the LED from excessive current |
 | Resistor for Buttons         | Pull-down resistors to prevent floating inputs | 2         | 10kΩ Resistor                   | TinyTronics  | €0.05 (each)          | Ensures proper button states          |
 | Jumper Wires                 | Wiring connections                         | As needed    | Male-to-Male, Male-to-Female    | TinyTronics  | €3.00 (set)           | For connecting components             |
 | DHT11 Sensor                 | Temperature sensor                         | 1            | DHT11                           | TinyTronics  | €3.00                | Measures temperature                  |

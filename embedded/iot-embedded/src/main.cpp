@@ -6,6 +6,7 @@
 #include <MFRC522.h>
 #include <DHT.h>
 #include <Adafruit_Sensor.h>
+#include <HTTPClient.h>
 
 // Pin definitions
 #define SS_PIN 10           // SDA/SS Pin for SPI
@@ -35,10 +36,13 @@ String cardUID = "";
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
+void sendDataToAPI(String dataType, String data1, String data2);
+
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT); // Set the onboard LED pin as output
   digitalWrite(LED_BUILTIN, LOW); // Turn off the LED
+  
   // Start serial communication
   Serial.begin(115200);
   SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
@@ -80,7 +84,7 @@ void setup() {
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
-  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  // xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
 }
 
 void loop() {
@@ -152,6 +156,7 @@ void temperatureTask(void * pvParameters) {
   while (true) {
     // Read temperature from DHT sensor
     float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
     
     // Check if the reading is valid
     if (isnan(temperature)) {
@@ -160,9 +165,70 @@ void temperatureTask(void * pvParameters) {
       Serial.print("Temperature: ");
       Serial.print(temperature);
       Serial.println("°C");
+      Serial.print("Humidity: ");
+      Serial.print(humidity);
+      Serial.println("%");
+
+      // Send temperature and humidity to API
+      sendDataToAPI("temperature", String(temperature), String(humidity));
     }
     
     // Delay for 30 seconds (30000 ms)
     vTaskDelay(30000 / portTICK_PERIOD_MS);
+  }
+}
+
+// Function to send data to API
+void sendDataToAPI(String dataType, String data1, String data2) {
+  if (WiFi.status() == WL_CONNECTED) { // Check WiFi connection status
+    HTTPClient http;
+    http.begin("http://145.92.189.155/api.php");  // Specify the URL
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
+
+    String postData = "";
+
+    if (dataType == "temperature") {
+      // Send temperature and humidity data
+      postData = "type=temperature&temperature=" + data1 + "&humidity=" + data2;
+    } else if (dataType == "card") {
+      // Send card UID data
+      postData = "type=card&uid=" + data1;
+    }
+
+    // Send the POST request
+    int httpResponseCode = http.POST(postData);
+
+    // Check the response code
+    if (httpResponseCode > 0) {
+      String response = http.getString();  // Get the response
+      Serial.println("Response from server: " + response);
+
+      // Parse JSON response
+      DynamicJsonDocument doc(1024);
+      DeserializationError error = deserializeJson(doc, response);
+
+      if (!error) {
+        const char* status = doc["status"];
+        if (strcmp(status, "success") == 0) {
+          // If it's a card response, get the user's name
+          if (dataType == "card") {
+            const char* userName = doc["name"];
+            // Display the user's name on the LCD
+            lcd.setCursor(0, 0);
+            lcd.print("Welcome: ");
+            lcd.setCursor(0, 1);
+            lcd.print(userName);
+          }
+        }
+      } else {
+        Serial.println("Error parsing JSON");
+      }
+    } else {
+      Serial.println("Error sending POST request: " + String(httpResponseCode));
+    }
+
+    http.end();  // End the HTTP connection
+  } else {
+    Serial.println("Error: WiFi not connected");
   }
 }
