@@ -182,7 +182,7 @@ void temperatureTask(void * pvParameters) {
 void sendDataToAPI(String dataType, String data1, String data2) {
   if (WiFi.status() == WL_CONNECTED) { // Check WiFi connection status
     HTTPClient http;
-    http.begin("http://145.92.189.155/api.php");  // Specify the URL
+    http.begin("http://145.92.189.155/php/api.php");  // Specify the URL
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
 
     String postData = "";
