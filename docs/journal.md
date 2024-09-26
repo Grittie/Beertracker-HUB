@@ -132,13 +132,14 @@ Along with updating the proper documentation for it and debugging the embedded h
 
 <br>
 
-**👩‍🎨 Concept & Design** (solved)
+**👩‍🎨 Concept & Design** (unsolved)
 
-**Reviewer:** 
+**Reviewer:**  Simon Sweerz
 
-**Feedback:**
+**Feedback:** (ignored)
 
-**Takeaway:** 
+**Takeaway:** (ignored)
+
 <br>
 
 ## Performance Review Week 3
@@ -147,3 +148,17 @@ Along with updating the proper documentation for it and debugging the embedded h
 Sadly this week I got below average, due to much time spent on learning CAD and working on and debugging hardware I did not have enough commits. Combined with being sick and not attending school on the friday.
 
 ---
+## Week 4
+Bla bla bla
+
+<br>
+
+### Feedback
+**👩‍🎨 Concept & Design** (unsolved)
+
+**Reviewer:** Koen Lammers
+
+**Feedback:** 
+
+**Takeaway:** 
+<br>
