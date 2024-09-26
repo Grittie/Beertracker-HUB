@@ -23,6 +23,7 @@ void setup() {
   SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
   mfrc522.PCD_Init();             // Initialize RFID module
 
+  Serial.println("RFID Reader Initialized");
   // Initialize LED and buzzer pins as outputs
   pinMode(LED_PIN, OUTPUT);       
   digitalWrite(LED_PIN, LOW);     

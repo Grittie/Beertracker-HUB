@@ -7,8 +7,6 @@
 #include <DHT.h>
 #include <Adafruit_Sensor.h>
 #include <HTTPClient.h>
-#include <ArduinoJson.h>
-
 
 // Pin definitions
 #define SS_PIN 10           // SDA/SS Pin for SPI
@@ -39,13 +37,9 @@ void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
-String getUserNameFromAPI(String cardUID);
 
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT); // Set the onboard LED pin as output
-  digitalWrite(LED_BUILTIN, LOW); // Turn off the LED
-  
   // Start serial communication
   Serial.begin(115200);
   SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
@@ -63,7 +57,7 @@ void setup() {
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  // wifiManager.resetSettings();
+  wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
@@ -87,7 +81,7 @@ void setup() {
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
-  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  // xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
 }
 
 void loop() {
@@ -95,15 +89,6 @@ void loop() {
 
 // Task to continuously scan for RFID cards
 void rfidTask(void * pvParameters) {
-
-  // Perform a self-test to check if the RFID module is working
-  if (!mfrc522.PCD_PerformSelfTest()) {
-  Serial.println("RFID Self-test failed!");
-  } else {
-    Serial.println("RFID Self-test passed!");
-  }
-
-
   Serial.println("RFID Task Started");
   while (true) {
     // Check if a new card is present
@@ -135,18 +120,9 @@ void feedbackTask(void * pvParameters) {
       // Turn on the LED
       digitalWrite(SCAN_LED, HIGH);
 
-      // Send the card UID to the API to get the user name
-      String userName = getUserNameFromAPI(cardUID);
-
-      if (userName != "") {
-        // Display the user's name on the LCD
-        lcd.setCursor(0, 0);
-        lcd.print("User: " + userName);
-      } else {
-        // If user name is not found, display the card UID instead
-        lcd.setCursor(0, 0);
-        lcd.print("UID:" + cardUID);
-      }
+      // Display the card UID on the LCD
+      lcd.setCursor(0, 0);
+      lcd.print("UID:" + cardUID);
 
       // Play a sound
       tone(BUZZER_PIN, 523);  // Play tone C4
@@ -171,7 +147,6 @@ void feedbackTask(void * pvParameters) {
     vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
   }
 }
-
 
 // Task to continuously read the temperature
 void temperatureTask(void * pvParameters) {
@@ -204,7 +179,7 @@ void temperatureTask(void * pvParameters) {
 void sendDataToAPI(String dataType, String data1, String data2) {
   if (WiFi.status() == WL_CONNECTED) { // Check WiFi connection status
     HTTPClient http;
-    http.begin("http://145.92.189.155/php/api.php");  // Specify the URL
+    http.begin("http://localhost/api.php");  // Specify the URL
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
 
     String postData = "";
@@ -215,9 +190,6 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     } else if (dataType == "card") {
       // Send card UID data
       postData = "type=card&uid=" + data1;
-    } else {
-      Serial.println("Invalid data type");
-      return;
     }
 
     // Send the POST request
@@ -227,40 +199,4 @@ void sendDataToAPI(String dataType, String data1, String data2) {
   } else {
     Serial.println("Error: WiFi not connected");
   }
-}
-
-
-String getUserNameFromAPI(String cardUID) {
-  if (WiFi.status() == WL_CONNECTED) { // Check WiFi connection status
-    HTTPClient http;
-    http.begin("http://145.92.189.155/php/api.php");  // Specify the URL to your API
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
-
-    String postData = "type=card&uid=" + cardUID;
-
-    int httpResponseCode = http.POST(postData);
-    
-    String payload = ""; // Variable to store the API response
-    if (httpResponseCode == 200) { // If the request was successful
-      payload = http.getString();  // Get the response from the server
-      Serial.println(payload); // For debugging purposes
-
-      // Parse the JSON response
-      DynamicJsonDocument doc(1024);
-      DeserializationError error = deserializeJson(doc, payload);
-      if (!error) {
-        if (doc["status"] == "success") {
-          return doc["name"].as<String>(); // Return the user's name
-        }
-      }
-    } else {
-      Serial.println("Error on HTTP request");
-    }
-
-    http.end();  // End the HTTP connection
-  } else {
-    Serial.println("Error: WiFi not connected");
-  }
-
-  return "";  // Return an empty string if no user name is found or an error occurs
 }
