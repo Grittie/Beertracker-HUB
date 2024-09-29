@@ -19,16 +19,19 @@ CREATE TABLE Cards (
         ON UPDATE CASCADE
 );
 
-CREATE TABLE WorkSessions (
+CREATE TABLE Sessions (
     SessionID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
-    ClockInTime DATETIME NOT NULL,
-    ClockOutTime DATETIME,
-    TotalHours FLOAT GENERATED ALWAYS AS (TIMESTAMPDIFF(SECOND, ClockInTime, ClockOutTime) / 3600) STORED,
+    SessionDate DATE NOT NULL,
+    CheckInTime TIME NOT NULL,
+    CheckOutTime TIME,
+    Pitcher INT DEFAULT 0,
+    TotalHours FLOAT GENERATED ALWAYS AS (TIMESTAMPDIFF(SECOND, CONCAT(SessionDate, ' ', CheckInTime), CONCAT(SessionDate, ' ', CheckOutTime)) / 3600) STORED,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
 
 CREATE TABLE AttendanceLogs (
     LogID INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,10 +58,11 @@ VALUES
 (1, '12345ABC', 'Active', '2024-09-08', NULL),
 (2, '67890XYZ', 'Active', '2024-09-08', NULL);
 
-INSERT INTO WorkSessions (UserID, ClockInTime, ClockOutTime)
+INSERT INTO Sessions (UserID, SessionDate, CheckInTime, CheckOutTime, Pitcher)
 VALUES 
-(1, '2024-09-08 08:00:00', '2024-09-08 17:00:00'),
-(2, '2024-09-08 09:00:00', '2024-09-08 18:00:00');
+(1, '2024-09-08', '08:00:00', '17:00:00', 0),
+(2, '2024-09-08', '09:00:00', '18:00:00', 1);
+
 
 INSERT INTO AttendanceLogs (CardID, Timestamp, EventType)
 VALUES 
