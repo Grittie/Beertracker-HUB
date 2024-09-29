@@ -6,6 +6,7 @@
 #define RST_PIN 41       // Reset Pin for RFID
 #define LED_PIN 18       // LED Pin
 #define BUZZER_PIN 16    // Buzzer Pin
+#define BUTTON_PIN 20    // Button Pin for resetting RFID
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
@@ -17,6 +18,7 @@ String cardUID = "";
 // Forward declarations of task functions
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
+void checkButtonAndResetRFID();
 
 void setup() {
   Serial.begin(115200);           // Start serial communication for debugging
@@ -31,15 +33,18 @@ void setup() {
 
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
+  Serial.println("RFID Task Created");
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 1, NULL); // Task for feedback (LED/Buzzer)
+  Serial.println("Feedback Task Created");
 }
 
 void loop() {
-  // Empty loop as tasks are running
+  checkButtonAndResetRFID(); 
 }
 
 // Task to continuously scan for RFID cards
 void rfidTask(void * pvParameters) {
+  Serial.println("RFID Task Started");
   while (true) {
     // Check if a new card is present
     if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
@@ -86,5 +91,15 @@ void feedbackTask(void * pvParameters) {
         
     // Delay between checks
     vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
+  }
+}
+
+// Function to check if the button is pressed and reset the RFID
+void checkButtonAndResetRFID() {
+  if (digitalRead(BUTTON_PIN) == HIGH) {  // Button pressed (active LOW)
+    Serial.println("Resetting RFID scanner...");
+    mfrc522.PCD_Init();  // Reinitialize the RFID module
+    Serial.println("RFID scanner reset.");
+    delay(1000);  // Debounce delay to prevent multiple resets
   }
 }

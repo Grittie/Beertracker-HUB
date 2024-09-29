@@ -7,6 +7,8 @@
 #include <DHT.h>
 #include <Adafruit_Sensor.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
+
 
 // Pin definitions
 #define SS_PIN 10           // SDA/SS Pin for SPI
@@ -57,7 +59,7 @@ void setup() {
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  wifiManager.resetSettings();
+  // wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
@@ -81,7 +83,7 @@ void setup() {
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
-  // xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
 }
 
 void loop() {
@@ -101,9 +103,10 @@ void rfidTask(void * pvParameters) {
       cardUID.toUpperCase();
       Serial.println("Card detected: " + cardUID);
 
-      // Signal that card has been selected for feedbackTask
-      cardDetected = true;
-      
+      cardDetected = true;  // Set flag to indicate card is detected for feedback task
+      // Send the card UID to the API and get the username
+      sendDataToAPI("card", cardUID, "");
+
       // Halt the PICC to prevent repeated scans
       mfrc522.PICC_HaltA();
     }
@@ -113,6 +116,7 @@ void rfidTask(void * pvParameters) {
   }
 }
 
+
 // Task to handle feedback (LED and Buzzer) when a card is detected
 void feedbackTask(void * pvParameters) {
   while (true) {
@@ -120,11 +124,7 @@ void feedbackTask(void * pvParameters) {
       // Turn on the LED
       digitalWrite(SCAN_LED, HIGH);
 
-      // Display the card UID on the LCD
-      lcd.setCursor(0, 0);
-      lcd.print("UID:" + cardUID);
-
-      // Play a sound
+      // Play a sound for feedback
       tone(BUZZER_PIN, 523);  // Play tone C4
       delay(100);             
       noTone(BUZZER_PIN);
@@ -135,18 +135,17 @@ void feedbackTask(void * pvParameters) {
       // Turn off the LED
       digitalWrite(SCAN_LED, LOW);
 
-      // Keep the text visible for a short period
-      delay(2000);  // Wait 2 seconds
+      // Keep the feedback visible for a short period
+      delay(500);  // Wait 0.5 seconds for feedback duration
 
-      // Clear the LCD
-      lcd.clear();
       cardDetected = false;  // Reset flag after feedback is given
     }
-        
+
     // Delay between checks
     vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
   }
 }
+
 
 // Task to continuously read the temperature
 void temperatureTask(void * pvParameters) {
@@ -171,16 +170,18 @@ void temperatureTask(void * pvParameters) {
     }
     
     // Delay for 30 seconds (30000 ms)
-    vTaskDelay(30000 / portTICK_PERIOD_MS);
+    vTaskDelay(60000 / portTICK_PERIOD_MS);
   }
 }
 
 // Function to send data to API
 void sendDataToAPI(String dataType, String data1, String data2) {
-  if (WiFi.status() == WL_CONNECTED) { // Check WiFi connection status
+  if (WiFi.status() == WL_CONNECTED) {  // Check WiFi connection status
     HTTPClient http;
-    http.begin("http://localhost/api.php");  // Specify the URL
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
+    http.setTimeout(5000);  // Set a 5-second timeout for the request
+
+    http.begin("http://192.168.103.85/php/api.php");  // Specify the URL
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // Set the POST content type
 
     String postData = "";
 
@@ -195,7 +196,48 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     // Send the POST request
     int httpResponseCode = http.POST(postData);
 
-    http.end();  // End the HTTP connection
+    if (httpResponseCode > 0) {
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+
+      // If card data is being sent, handle the response
+      if (dataType == "card") {
+        String response = http.getString();
+        Serial.println("Response: " + response);
+
+        // Parse the JSON response to get the username
+        DynamicJsonDocument doc(1024);
+        DeserializationError error = deserializeJson(doc, response);
+        if (!error) {
+          const char* status = doc["status"];
+          if (strcmp(status, "success") == 0) {
+            const char* userName = doc["name"];
+            Serial.print("Username: ");
+            Serial.println(userName);
+
+            // Display the username on the LCD
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Welcome,");
+            lcd.setCursor(0, 1);
+            lcd.print(userName);  // Display the username on the second line
+
+            // Keep the text visible for a short period
+            delay(2000);  // Wait 2 seconds
+            lcd.clear();
+          } else {
+            Serial.println("Error: User not found");
+          }
+        } else {
+          Serial.println("Failed to parse response");
+        }
+      }
+    } else {
+      Serial.print("Error on sending POST: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end();  // End the HTTP connection to free up resources
   } else {
     Serial.println("Error: WiFi not connected");
   }

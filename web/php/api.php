@@ -36,7 +36,7 @@ if ($type === 'temperature' && is_numeric($temperature) && is_numeric($humidity)
         $stmt->close();
 
         // Now look up the User Name from the Users table using the UserID
-        $stmt = $dbConnection->prepare("SELECT Name FROM Users WHERE ID = ?");
+        $stmt = $dbConnection->prepare("SELECT Name FROM Users WHERE UserID = ?");
         $stmt->bind_param("i", $userID);
         $stmt->execute();
         $stmt->store_result();

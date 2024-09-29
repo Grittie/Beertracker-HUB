@@ -6,7 +6,7 @@ window.addEventListener('load', function() {
     fetchUserData();
 
     // Fetch sensor data and update the UI
-    fetchSensorData();
+    fetchTemperatureData();
 });
 
 // Function to fetch the connection status and update the UI
@@ -82,37 +82,22 @@ function fetchUserData() {
         });
 }
 
-// Function to fetch sensor data and update the UI
-function fetchSensorData() {
-    // Create a POST request to send the 'type' as 'sensor_data'
-    fetch('php/sensor_data.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            type: 'sensor_data',
-            humidity: 55,  // These are example values, replace with actual sensor data
-            temperature: 24
+function fetchTemperatureData() {
+    fetch('php/get_latest_temp.php')
+        .then(response => response.json())
+        .then(data => {
+            const temperatureDisplay = document.getElementById('temperature-display');
+            const humidityDisplay = document.getElementById('humidity-display');
+            if (data.success) {
+                temperatureDisplay.innerHTML = `${data.temperature}`;
+                humidityDisplay.innerHTML = `${data.humidity}`;
+            } else {
+                temperatureDisplay.innerHTML = "Error fetching sensor data";
+                humidityDisplay.innerHTML = "Error fetching sensor data";
+                console.error("Error fetching sensor data:", data.message);
+            }
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        const temperatureDisplay = document.getElementById('temperature-display');
-        const humidityDisplay = document.getElementById('humidity-display');
-        
-        if (data.temperature && data.humidity) {
-            temperatureDisplay.textContent = data.temperature;
-            humidityDisplay.textContent = data.humidity;
-        } else {
-            temperatureDisplay.textContent = 'N/A';
-            humidityDisplay.textContent = 'N/A';
-            console.error('Error fetching sensor data:', data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('temperature-display').textContent = 'N/A';
-        document.getElementById('humidity-display').textContent = 'N/A';
-    });
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }

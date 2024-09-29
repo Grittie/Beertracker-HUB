@@ -158,7 +158,7 @@ Bla bla bla
 
 **Reviewer:** Koen Lammers
 
-**Feedback:** 
+**Feedback:** Hi Lars, please take into account that pla has a low glass transition point. this means that when your device is on a table on a sunny day, it might get soft or melt. for the summer it would be better to use a material like PETG, which has a higher glass transition temperature.
 
-**Takeaway:** 
+**Takeaway:** For prototyping I can use PLA but for the end product it should be better to use PETG to ensure the encasing doesnt melt or get soft.
 <br>
