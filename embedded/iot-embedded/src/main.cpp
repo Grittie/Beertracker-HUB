@@ -39,6 +39,7 @@ void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
+void checkWiFiConnection();
 
 
 void setup() {
@@ -84,6 +85,7 @@ void setup() {
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
 }
 
 void loop() {
@@ -126,17 +128,17 @@ void feedbackTask(void * pvParameters) {
 
       // Play a sound for feedback
       tone(BUZZER_PIN, 523);  // Play tone C4
-      delay(100);             
+      vTaskDelay(100);             
       noTone(BUZZER_PIN);
       tone(BUZZER_PIN, 784);  // Play tone G4
-      delay(100);
+      vTaskDelay(100);             
       noTone(BUZZER_PIN);
 
       // Turn off the LED
       digitalWrite(SCAN_LED, LOW);
 
       // Keep the feedback visible for a short period
-      delay(500);  // Wait 0.5 seconds for feedback duration
+      vTaskDelay(500);             
 
       cardDetected = false;  // Reset flag after feedback is given
     }
@@ -240,5 +242,27 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     http.end();  // End the HTTP connection to free up resources
   } else {
     Serial.println("Error: WiFi not connected");
+  }
+}
+
+void checkWiFiConnection() {
+  if (WiFi.status() != WL_CONNECTED) {
+    unsigned long currentMillis = millis();
+    
+    // Attempt reconnection every `reconnectInterval` milliseconds
+    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
+      lastReconnectAttempt = currentMillis;
+      
+      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
+      digitalWrite(CONNECTION_LED, LOW);
+      
+      // Attempt to reconnect
+      if (WiFi.reconnect()) {
+        Serial.println("Reconnected to Wi-Fi");
+        digitalWrite(CONNECTION_LED, HIGH);
+      } else {
+        Serial.println("Faile");
+      }
+    }
   }
 }
