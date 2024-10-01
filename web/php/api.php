@@ -9,6 +9,7 @@ if ($type === 'temperature') {
     require_once 'api/temperature_handler.php';
 } elseif ($type === 'card') {
     require_once 'api/card_handler.php';
+    require_once 'session_handler.php';
 } else {
     echo json_encode(array("status" => "error", "message" => "Invalid type or missing data"));
 }

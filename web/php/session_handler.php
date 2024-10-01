@@ -32,10 +32,10 @@ if ($uid) {
             if ($checkOutTime === null) {
                 // If the user is not checked out, check them out now
                 $checkOutTime = date('H:i:s'); // Get the current time
-                $stmt = $dbConnection->prepare("UPDATE Sessions SET CheckOutTime = ?, TotalHours = TIMESTAMPDIFF(MINUTE, CheckInTime, ?) / 60 WHERE SessionID = ?");
-                $stmt->bind_param("ssi", $checkOutTime, $checkOutTime, $sessionID);
+                $stmt = $dbConnection->prepare("UPDATE Sessions SET CheckOutTime = ? WHERE SessionID = ?");
+                $stmt->bind_param("si", $checkOutTime, $sessionID);
                 $stmt->execute();
-
+                
                 echo json_encode(array("status" => "success", "action" => "checked_out", "message" => "User checked out", "name" => getUserName($dbConnection, $userID)));
             } else {
                 echo json_encode(array("status" => "error", "message" => "User already checked out"));
