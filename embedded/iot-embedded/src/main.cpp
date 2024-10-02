@@ -60,7 +60,7 @@ void setup() {
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  // wifiManager.resetSettings();
+  wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
@@ -85,7 +85,7 @@ void setup() {
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
-  xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
+  // xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
 }
 
 void loop() {
@@ -182,7 +182,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     HTTPClient http;
     http.setTimeout(5000);  // Set a 5-second timeout for the request
 
-    http.begin("http://192.168.103.85/php/api.php");  // Specify the URL
+    http.begin("http://192.168.122.85/php/api.php");  // Specify the URL
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // Set the POST content type
 
     String postData = "";
@@ -245,24 +245,24 @@ void sendDataToAPI(String dataType, String data1, String data2) {
   }
 }
 
-void checkWiFiConnection() {
-  if (WiFi.status() != WL_CONNECTED) {
-    unsigned long currentMillis = millis();
+// void checkWiFiConnection() {
+//   if (WiFi.status() != WL_CONNECTED) {
+//     unsigned long currentMillis = millis();
     
-    // Attempt reconnection every `reconnectInterval` milliseconds
-    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
-      lastReconnectAttempt = currentMillis;
+//     // Attempt reconnection every `reconnectInterval` milliseconds
+//     if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
+//       lastReconnectAttempt = currentMillis;
       
-      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
-      digitalWrite(CONNECTION_LED, LOW);
+//       Serial.println("Wi-Fi disconnected, attempting to reconnect...");
+//       digitalWrite(CONNECTION_LED, LOW);
       
-      // Attempt to reconnect
-      if (WiFi.reconnect()) {
-        Serial.println("Reconnected to Wi-Fi");
-        digitalWrite(CONNECTION_LED, HIGH);
-      } else {
-        Serial.println("Faile");
-      }
-    }
-  }
-}
+//       // Attempt to reconnect
+//       if (WiFi.reconnect()) {
+//         Serial.println("Reconnected to Wi-Fi");
+//         digitalWrite(CONNECTION_LED, HIGH);
+//       } else {
+//         Serial.println("Faile");
+//       }
+//     }
+//   }
+// }

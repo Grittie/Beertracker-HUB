@@ -6,7 +6,7 @@ $type = $_POST["type"] ?? null;
 
 // Delegate based on the request type
 if ($type === 'temperature') {
-    require_once 'api/temperature_handler.php';
+    require_once 'api/temp_handler.php';
 } elseif ($type === 'card') {
     require_once 'api/card_handler.php';
     require_once 'api/session_handler.php';
