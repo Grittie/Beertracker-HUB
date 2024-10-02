@@ -22,6 +22,7 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 <img src="../assets/images/learningjournal/datasheetlcd.png" alt="Datasheet of the LCD" width="200" />
 <img src="../assets/images/learningjournal/cadLCD.png" alt="Cadding of the enclosement" width="500" />
 
+<br>
 
 ### Feedback
 **🧰 System Requirements** (solved)
@@ -34,9 +35,11 @@ I took an LCD to start learning this, I looked up the datasheet where I was able
 
 <br>
 
-
 ## Performance Review Week 1
 <img src="../../assets/images/learningjournal/reviews/IoTw2-Lars.png" alt="performance review" width="500" />
+
+<br>
+
 ---
 
 ## Week 2
@@ -58,6 +61,8 @@ Having created a solid basis for the website I expanded my embedded part by addi
 Lastly I have gotten my esp32 connected to the wifi using a wifi manager which makes it so I again don't have any potential important info saved in the code. I sketched out some more designs for my device and thought of fun additions and created the basis for my API. Which will handle the data calls from device to device.
 
 <img src="../../assets/images/learningjournal/sketch2.png" alt="second sketch of the device" width="500" />
+
+<br>
 
 ### Feedback
 **🧰 Technical Documentations** (unsolved)
@@ -103,6 +108,8 @@ Lastly I have gotten my esp32 connected to the wifi using a wifi manager which m
 ## Performance Review Week 2
 <img src="../../assets/images/learningjournal/reviews/IoTw3-Lars.png" alt="performance review" width="500" />
 
+<br>
+
 ---
 
 ## Week 3
@@ -119,7 +126,7 @@ Along with updating the proper documentation for it and debugging the embedded h
 
 <img src="../../assets/images/learningjournal/new_fritzing.png" alt="new fritzing diagrams" width="500" />
 
-
+<br>
 
 ### Feedback
 **👩‍🎨 Concept & Design** (solved)
@@ -136,20 +143,26 @@ Along with updating the proper documentation for it and debugging the embedded h
 
 **Reviewer:**  Simon Sweerz
 
-**Feedback:** (ignored)
+**Feedback:** Ik denk dat het idee van SMART requirements is dat je meerdere requirements hebt, die allemaal SMART geformuleerd zijn. Voor de rest leg je goed uit voor wie beertracker is en waarvoor het is bedoelt.
 
-**Takeaway:** (ignored)
+
+**Takeaway:** Ik moet meerdere smart doelen maken.
 
 <br>
 
 ## Performance Review Week 3
-<img src="../../assets/images/learningjournal/reviews/IoTw3-Lars.png" alt="performance review" width="500" />
+<img src="../../assets/images/learningjournal/reviews/IoTw4-Lars.png" alt="performance review" width="500" />
 
 Sadly this week I got below average, due to much time spent on learning CAD and working on and debugging hardware I did not have enough commits. Combined with being sick and not attending school on the friday.
 
+<br>
+
 ---
+
 ## Week 4
-Bla bla bla
+The week started with writing a lot of documentation, I was lacking behind especially with Concept & Design (the feedback counted for week 3). The rest of week was primarily working on my api and embedded to get two communication working. This was a longer than anticipated task seeing how my esp32 also died during it and I didn't know for a whole day trying to debug. But I managed to create a two way communication where the esp32 sends the card UID and it receives the user's name associated with that UID, back from the api to display it on the LCD.
+
+<img src="../../assets/images/learningjournal/lcd_name_display.png" alt="performance review" width="500" />
 
 <br>
 
@@ -161,4 +174,28 @@ Bla bla bla
 **Feedback:** Hi Lars, please take into account that pla has a low glass transition point. this means that when your device is on a table on a sunny day, it might get soft or melt. for the summer it would be better to use a material like PETG, which has a higher glass transition temperature.
 
 **Takeaway:** For prototyping I can use PLA but for the end product it should be better to use PETG to ensure the encasing doesnt melt or get soft.
+
 <br>
+
+## Performance Review Week 4
+<img src="../../assets/images/learningjournal/reviews/IoTw5-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+---
+
+## Week 5
+bla bla
+
+<br>
+
+### Feedback
+
+<br>
+
+## Performance Review Week 4
+<img src="../../assets/images/learningjournal/reviews/IoTw5-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+---
