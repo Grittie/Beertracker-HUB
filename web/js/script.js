@@ -15,7 +15,7 @@ window.addEventListener('load', function() {
 // Function to fetch the connection status and update the UI
 function fetchConnectionStatus() {
     // Fetch the connection status from the server
-    fetch('php/connection_status.php')
+    fetch('php/get_connection_status.php')
         .then(response => response.json())
         .then(data => {
             const connectionStatus = document.getElementById('database-connection');
