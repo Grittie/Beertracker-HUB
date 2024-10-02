@@ -48,3 +48,99 @@ This API handles temperature, card, and session data for the clock-in/out system
 
 ---
 
+### Submit Card Data
+**URL:** `/api.php`  
+**Method:** `POST`  
+**Handler:** `card_handler.php`
+
+#### Parameters
+| Name   | Type   | Required | Description                      |
+|--------|--------|----------|----------------------------------|
+| `type` | string | Yes      | Must be set to `'card'`.         |
+| `uid`  | string | Yes      | Unique identifier for the card.  |
+
+#### Example Request (JSON)
+```json
+{
+  "type": "card",
+  "uid": "04A224FF"
+}
+```
+
+#### Response
+- **Success (User found):**
+    ```json
+    {
+      "status": "success",
+      "name": "John Doe"
+    }
+    ```
+- **Error (Card not found):**
+    ```json
+    {
+      "status": "error",
+      "message": "Card not found"
+    }
+    ```
+- **Error (UID not provided):**
+    ```json
+    {
+      "status": "error",
+      "message": "UID not provided"
+    }
+    ```
+
+---
+
+### Handle Session Check-in/Check-out
+**URL:** `/api.php`  
+**Method:** `POST`  
+**Handler:** `session_handler.php`
+
+#### Parameters
+| Name   | Type   | Required | Description                      |
+|--------|--------|----------|----------------------------------|
+| `type` | string | Yes      | Must be set to `'card'`.         |
+| `uid`  | string | Yes      | Unique identifier for the card.  |
+
+#### Example Request (Check-in/Check-out)
+```json
+{
+  "type": "card",
+  "uid": "04A224FF"
+}
+```
+
+#### Response
+- **Success (Check-in):**
+    ```json
+    {
+      "status": "success",
+      "action": "checked_in",
+      "message": "User checked in",
+      "name": "John Doe"
+    }
+    ```
+- **Success (Check-out):**
+    ```json
+    {
+      "status": "success",
+      "action": "checked_out",
+      "message": "User checked out",
+      "name": "John Doe"
+    }
+    ```
+- **Error (Already checked out):**
+    ```json
+    {
+      "status": "error",
+      "message": "User already checked out"
+    }
+    ```
+- **Error (Card not found):**
+    ```json
+    {
+      "status": "error",
+      "message": "Card not found"
+    }
+    ```
