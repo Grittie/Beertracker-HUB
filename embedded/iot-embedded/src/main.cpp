@@ -34,13 +34,16 @@ volatile bool cardDetected = false;
 // Variable to store the card UID in hexadecimal format (e.g. "DEADBEEF") 
 String cardUID = ""; 
 
+// Variables for adjusting the wifi check function
+unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconnection attempt
+const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
+
 // Forward declarations of task functions
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
+void checkWiFiConnection(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
-void checkWiFiConnection();
-
 
 void setup() {
   // Start serial communication
@@ -176,6 +179,37 @@ void temperatureTask(void * pvParameters) {
   }
 }
 
+
+// Function to check WiFi
+void checkWiFiConnection(void * pvParameters) {
+  if (WiFi.status() != WL_CONNECTED) {
+    unsigned long currentMillis = millis();
+    
+    // Attempt reconnection every `reconnectInterval` milliseconds
+    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
+      lastReconnectAttempt = currentMillis;
+      
+      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
+      digitalWrite(CONNECTION_LED, LOW);
+      
+      // Attempt to reconnect
+      if (WiFi.reconnect()) {
+        Serial.println("Reconnected to Wi-Fi");
+        digitalWrite(CONNECTION_LED, HIGH);
+
+        // Notify the backend that the ESP32 is connected
+        sendDataToAPI("connection", "connected", "");
+      } else {
+        Serial.println("Failed to reconnect");
+
+        // Notify the backend that the ESP32 is disconnected
+        sendDataToAPI("connection", "disconnected", "");
+      }
+    }
+  }
+}
+
+
 // Function to send data to API
 void sendDataToAPI(String dataType, String data1, String data2) {
   if (WiFi.status() == WL_CONNECTED) {  // Check WiFi connection status
@@ -193,6 +227,8 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     } else if (dataType == "card") {
       // Send card UID data
       postData = "type=card&uid=" + data1;
+    } else if (dataType == "connection") {
+      postData = "type=connection&status=" + data1;
     }
 
     // Send the POST request
@@ -242,36 +278,5 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     http.end();  // End the HTTP connection to free up resources
   } else {
     Serial.println("Error: WiFi not connected");
-  }
-}
-
-unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconnection attempt
-const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
-
-void checkWiFiConnection() {
-  if (WiFi.status() != WL_CONNECTED) {
-    unsigned long currentMillis = millis();
-    
-    // Attempt reconnection every `reconnectInterval` milliseconds
-    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
-      lastReconnectAttempt = currentMillis;
-      
-      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
-      digitalWrite(CONNECTION_LED, LOW);
-      
-      // Attempt to reconnect
-      if (WiFi.reconnect()) {
-        Serial.println("Reconnected to Wi-Fi");
-        digitalWrite(CONNECTION_LED, HIGH);
-
-        // Notify the backend that the ESP32 is connected
-        sendDataToAPI("connection_status", "connected", "");
-      } else {
-        Serial.println("Failed to reconnect");
-
-        // Notify the backend that the ESP32 is disconnected
-        sendDataToAPI("connection_status", "disconnected", "");
-      }
-    }
   }
 }

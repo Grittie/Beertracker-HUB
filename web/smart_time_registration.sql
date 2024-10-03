@@ -49,6 +49,13 @@ CREATE TABLE InternalTemperature (
     Humidity FLOAT NOT NULL
 );
 
+CREATE TABLE ConnectionStatus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20)
+);
+
+
 INSERT INTO Users (Name, Role) 
 VALUES ('Bob', 'Employee'), ('Alice', 'Manager');
 
