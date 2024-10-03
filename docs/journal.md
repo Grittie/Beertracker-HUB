@@ -180,6 +180,8 @@ The week started with writing a lot of documentation, I was lacking behind espec
 ## Performance Review Week 4
 <img src="../../assets/images/learningjournal/reviews/IoTw5-Lars.png" alt="performance review" width="500" />
 
+Sadly again, another week of below expectations. I put in the hours but due to a lot of debugging hardware this weekend with non functional esp32's and sickness lowering my productivity I'm not there 100% and it shows on the performance review.
+
 <br>
 
 ---
@@ -190,6 +192,16 @@ bla bla
 <br>
 
 ### Feedback
+
+<br>
+
+**🌐 API Reference** (unsolved)
+
+**Reviewer:** Lucas Hilgevoord
+
+**Feedback:** Looks good! Nicely formatted :D
+
+**Takeaway:** N/A
 
 <br>
 

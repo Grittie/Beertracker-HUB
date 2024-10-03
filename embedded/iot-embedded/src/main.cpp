@@ -245,24 +245,27 @@ void sendDataToAPI(String dataType, String data1, String data2) {
   }
 }
 
-// void checkWiFiConnection() {
-//   if (WiFi.status() != WL_CONNECTED) {
-//     unsigned long currentMillis = millis();
+unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconnection attempt
+const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
+
+void checkWiFiConnection() {
+  if (WiFi.status() != WL_CONNECTED) {
+    unsigned long currentMillis = millis();
     
-//     // Attempt reconnection every `reconnectInterval` milliseconds
-//     if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
-//       lastReconnectAttempt = currentMillis;
+    // Attempt reconnection every `reconnectInterval` milliseconds
+    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
+      lastReconnectAttempt = currentMillis;
       
-//       Serial.println("Wi-Fi disconnected, attempting to reconnect...");
-//       digitalWrite(CONNECTION_LED, LOW);
+      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
+      digitalWrite(CONNECTION_LED, LOW);
       
-//       // Attempt to reconnect
-//       if (WiFi.reconnect()) {
-//         Serial.println("Reconnected to Wi-Fi");
-//         digitalWrite(CONNECTION_LED, HIGH);
-//       } else {
-//         Serial.println("Faile");
-//       }
-//     }
-//   }
-// }
+      // Attempt to reconnect
+      if (WiFi.reconnect()) {
+        Serial.println("Reconnected to Wi-Fi");
+        digitalWrite(CONNECTION_LED, HIGH);
+      } else {
+        Serial.println("Faile");
+      }
+    }
+  }
+}
