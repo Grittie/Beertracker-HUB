@@ -263,8 +263,14 @@ void checkWiFiConnection() {
       if (WiFi.reconnect()) {
         Serial.println("Reconnected to Wi-Fi");
         digitalWrite(CONNECTION_LED, HIGH);
+
+        // Notify the backend that the ESP32 is connected
+        sendDataToAPI("connection_status", "connected", "");
       } else {
-        Serial.println("Faile");
+        Serial.println("Failed to reconnect");
+
+        // Notify the backend that the ESP32 is disconnected
+        sendDataToAPI("connection_status", "disconnected", "");
       }
     }
   }
