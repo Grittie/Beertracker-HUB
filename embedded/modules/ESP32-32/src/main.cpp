@@ -11,16 +11,27 @@
 
 
 // Pin definitions
-#define SS_PIN 10           // SDA/SS Pin for SPI
-#define RST_PIN 41          // Reset Pin for RFID
-#define SCAN_LED 18         // LED Pin
-#define CONNECTION_LED 15   // LED Pin
-#define BUZZER_PIN 16       // Buzzer Pin
+// SPI Pins
+#define SS_PIN 5           // SDA/SS Pin for SPI
+#define RST_PIN 23          // Reset Pin for SPI
+#define SCK_PIN 18          // SCK Pin for SPI
+#define MOSI_PIN 23         // MOSI Pin for SPI
+#define MISO_PIN 19         // MISO Pin for SPI
+
+// LED Pins
+#define SCAN_LED 33         // LED Pin
+#define CONNECTION_LED 34   // LED Pin
+
+// Buzzer Pin
+#define BUZZER_PIN 35       // Buzzer Pin
+
+// Button Pins
 #define DECREASE_BUTTON 20  // Button Pin
 #define INCREASE_BUTTON 21  // Button Pin
-#define TEMP_SENSOR 17       // Analog Pin
-#define DHTTYPE DHT11       // DHT 11 type sensor
 
+// Temperature Sensor Pin
+#define TEMP_SENSOR 32       // Analog Pin
+#define DHTTYPE DHT11       // DHT 11 type sensor
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 DHT dht(TEMP_SENSOR, DHTTYPE);    // Create DHT instance
@@ -48,9 +59,19 @@ void sendDataToAPI(String dataType, String data1, String data2);
 void setup() {
   // Start serial communication
   Serial.begin(115200);
-  SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
-  mfrc522.PCD_Init();            // Initialize RFID module
-  dht.begin();                   // Initialize DHT sensor
+  Serial.println("Starting...");
+
+  // Initialize SPI communication
+  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+  Serial.println("SPI Initialized");
+
+  // Initialize RFID reader
+  mfrc522.PCD_Init();
+  Serial.println("RFID Initialized");
+
+  // Initialize DHT sensor
+  dht.begin();
+  Serial.println("DHT Initialized");
 
   // Initialize LED and buzzer pins as outputs
   pinMode(SCAN_LED, OUTPUT);       
