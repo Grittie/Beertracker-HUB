@@ -20,7 +20,7 @@
 
 // LED Pins
 #define SCAN_LED 33         // LED Pin
-#define CONNECTION_LED 34   // LED Pin
+#define CONNECTION_LED 27   // LED Pin
 
 // Buzzer Pin
 #define BUZZER_PIN 35       // Buzzer Pin
