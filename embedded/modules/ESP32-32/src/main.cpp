@@ -23,14 +23,14 @@
 #define CONNECTION_LED 27   // LED Pin
 
 // Buzzer Pin
-#define BUZZER_PIN 35       // Buzzer Pin
+#define BUZZER_PIN 25       // Buzzer Pin
 
 // Button Pins
 #define DECREASE_BUTTON 20  // Button Pin
 #define INCREASE_BUTTON 21  // Button Pin
 
 // Temperature Sensor Pin
-#define TEMP_SENSOR 32       // Analog Pin
+#define TEMP_SENSOR 26       // Analog Pin
 #define DHTTYPE DHT11       // DHT 11 type sensor
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
