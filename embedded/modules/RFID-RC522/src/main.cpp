@@ -1,105 +1,34 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-// Pin definitions
-#define SS_PIN 10        // SDA/SS Pin for SPI
-#define RST_PIN 41       // Reset Pin for RFID
-#define LED_PIN 18       // LED Pin
-#define BUZZER_PIN 16    // Buzzer Pin
-#define BUTTON_PIN 20    // Button Pin for resetting RFID
+// Define RFID pins for ESP32
+#define SS_PIN 5         // SDA/SS pin
+#define RST_PIN 17       // RST pin
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
-// Flag to signal when card is detected
-volatile bool cardDetected = false;  
-// Variable to store the card UID in hexadecimal format (e.g. "DEADBEEF") 
-String cardUID = ""; 
-
-// Forward declarations of task functions
-void rfidTask(void * pvParameters);
-void feedbackTask(void * pvParameters);
-void checkButtonAndResetRFID();
-
 void setup() {
-  Serial.begin(115200);           // Start serial communication for debugging
-  SPI.begin(36, 37, 35, 10);      // Initialize SPI with SCK, MISO, MOSI, and SS
-  mfrc522.PCD_Init();             // Initialize RFID module
-
-  Serial.println("RFID Reader Initialized");
-  // Initialize LED and buzzer pins as outputs
-  pinMode(LED_PIN, OUTPUT);       
-  digitalWrite(LED_PIN, LOW);     
-  pinMode(BUZZER_PIN, OUTPUT);    
-
-  // Multithreading setup for RFID and feedback tasks
-  xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
-  Serial.println("RFID Task Created");
-  xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 1, NULL); // Task for feedback (LED/Buzzer)
-  Serial.println("Feedback Task Created");
+  Serial.begin(115200);   // Initialize serial communication for debugging
+  SPI.begin();            // Initialize SPI bus
+  mfrc522.PCD_Init();     // Initialize the MFRC522 RFID reader
+  
+  Serial.println("RFID Reader Initialized. Waiting for a card...");
 }
 
 void loop() {
-  checkButtonAndResetRFID(); 
-}
-
-// Task to continuously scan for RFID cards
-void rfidTask(void * pvParameters) {
-  Serial.println("RFID Task Started");
-  while (true) {
-    // Check if a new card is present
-    if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-      // Store the card UID
-      cardUID = "";
-      for (byte i = 0; i < mfrc522.uid.size; i++) {
-        cardUID += String(mfrc522.uid.uidByte[i], HEX);
-      }
-      cardUID.toUpperCase();
-      Serial.println("Card detected: " + cardUID);
-
-      // Signal that card has been selected for feedbackTask
-      cardDetected = true;
-      
-      // Halt the PICC to prevent repeated scans
-      mfrc522.PICC_HaltA();
+  // Look for new cards
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    // Print the card's UID
+    Serial.print("Card UID: ");
+    for (byte i = 0; i < mfrc522.uid.size; i++) {
+      Serial.print(mfrc522.uid.uidByte[i], HEX);
+      Serial.print(" ");
     }
+    Serial.println();
 
-    // Delay between checks
-    vTaskDelay(100 / portTICK_PERIOD_MS);  // 100 ms delay for task switching
+    // Halt the current card to prevent reading it multiple times
+    mfrc522.PICC_HaltA();
   }
-}
 
-// Task to handle feedback (LED and Buzzer) when a card is detected
-void feedbackTask(void * pvParameters) {
-  while (true) {
-    if (cardDetected) {
-      // Turn on the LED
-      digitalWrite(LED_PIN, HIGH);
-
-      // Play a sound
-      // TODO: Improve this code.
-      tone(BUZZER_PIN, 523);  // Play tone C4
-      delay(100);             // Delay for 100 ms
-      noTone(BUZZER_PIN);
-      tone(BUZZER_PIN, 784);  // Play tone G4
-      delay(100);
-      noTone(BUZZER_PIN);
-
-      // Turn on the LED
-      digitalWrite(LED_PIN, LOW);
-      cardDetected = false;  // Reset flag after feedback is given
-    }
-        
-    // Delay between checks
-    vTaskDelay(10 / portTICK_PERIOD_MS);  // 10 ms delay for task switching
-  }
-}
-
-// Function to check if the button is pressed and reset the RFID
-void checkButtonAndResetRFID() {
-  if (digitalRead(BUTTON_PIN) == HIGH) {  // Button pressed (active LOW)
-    Serial.println("Resetting RFID scanner...");
-    mfrc522.PCD_Init();  // Reinitialize the RFID module
-    Serial.println("RFID scanner reset.");
-    delay(1000);  // Debounce delay to prevent multiple resets
-  }
+  delay(500);  // Add a short delay to avoid overwhelming the serial monitor
 }
