@@ -187,7 +187,16 @@ Sadly again, another week of below expectations. I put in the hours but due to a
 ---
 
 ## Week 5
-bla bla
+
+This week I did a lot of work implementing the api and back-end logic for the clock in clock out system, in the form of sessions. Sessions are day(s) bound where users can check in and check out using the rfid scanner (tested using Postman to make post requests). Their timestamps are recorded and a total is adjusted. On the embedded side there has been a lot of research and rebuilding. To begin my esp32-s3 has been replaced by a esp32-32 after showing faulty activity, the reason why I picked the esp32-32 was due to the fact of the 5v output which resulted in not needing to use the 9v battery and the dcdc converter resulting in a simpler hardware setup.
+
+<img src="../../assets/images/learningjournal/esp3232.png" alt="ESP3232 setup" width="500" />
+
+With this implemented I was closing in on finishing my blueprint on the code and hardware side. However my RFID scanner is very inconsistent in it working, which lead to more research and replacing my rfid rc522 with a [place holder rfid scanner] due to it's ability to work with i2c. The i2c protocol is already being used in the project for the LCD and works well, while the ISP connection of the old rfid scanner is very inconsistent.
+
+Last thing to be implemented was a heartbeat wifi connection to see if the esp32 is connected with the wifi and able to see it on the websites. The esp32 send an occasional heartbeat to the database with a healthy connection status and a timestamp. and on the website they look at the time stamp and see if it is in the websites frequency of (30 seconds).s
+
+<img src="../../assets/images/learningjournal/internetconnection.png" alt="internet connection setup" width="500" />
 
 <br>
 
