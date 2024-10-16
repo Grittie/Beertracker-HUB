@@ -192,7 +192,7 @@ This week I did a lot of work implementing the api and back-end logic for the cl
 
 <img src="../../assets/images/learningjournal/esp3232.png" alt="ESP3232 setup" width="500" />
 
-With this implemented I was closing in on finishing my blueprint on the code and hardware side. However my RFID scanner is very inconsistent in it working, which lead to more research and replacing my rfid rc522 with a [place holder rfid scanner] due to it's ability to work with i2c. The i2c protocol is already being used in the project for the LCD and works well, while the ISP connection of the old rfid scanner is very inconsistent.
+With this implemented I was closing in on finishing my blueprint on the code and hardware side. However my RFID scanner is very inconsistent in it working, which lead to more research and replacing my rfid rc522 with a PN532 due to it's ability to work with i2c. The i2c protocol is already being used in the project for the LCD and works well, while the ISP connection of the old rfid scanner is very inconsistent.
 
 Last thing to be implemented was a heartbeat wifi connection to see if the esp32 is connected with the wifi and able to see it on the websites. The esp32 send an occasional heartbeat to the database with a healthy connection status and a timestamp. and on the website they look at the time stamp and see if it is in the websites frequency of (30 seconds).s
 
@@ -214,8 +214,8 @@ Last thing to be implemented was a heartbeat wifi connection to see if the esp32
 
 <br>
 
-## Performance Review Week 4
-<img src="../../assets/images/learningjournal/reviews/IoTw5-Lars.png" alt="performance review" width="500" />
+## Performance Review Week 5
+<img src="../../assets/images/learningjournal/reviews/IoTw6-Lars.png" alt="performance review" width="500" />
 
 <br>
 
