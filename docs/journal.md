@@ -204,7 +204,7 @@ Last thing to be implemented was a heartbeat wifi connection to see if the esp32
 
 <br>
 
-**🌐 API Reference** (unsolved)
+**🌐 API Reference** (solved)
 
 **Reviewer:** Lucas Hilgevoord
 
@@ -214,8 +214,49 @@ Last thing to be implemented was a heartbeat wifi connection to see if the esp32
 
 <br>
 
-## Performance Review Week 5
+## Performance Review Week 6
 <img src="../../assets/images/learningjournal/reviews/IoTw6-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+---
+
+## Week 6
+
+This week I was sick and absent.
+
+<br>
+
+## Performance Review Week 7
+<img src="../../assets/images/learningjournal/reviews/IoTw7-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+---
+
+## Week 7
+
+lorem ipsum
+
+<br>
+
+### Feedback
+
+<br>
+
+**🌐 API Reference** (unsolved)
+
+**Reviewer:** Test
+
+**Feedback:**
+
+**Takeaway:**
+
+<br>
+
+## Performance Review Week 7
+
+<img src="../../assets/images/learningjournal/reviews/IoTw8-Lars.png" alt="performance review" width="500" />
 
 <br>
 
