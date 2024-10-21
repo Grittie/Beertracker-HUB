@@ -1,34 +1,37 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-// Define RFID pins for ESP32
-#define SS_PIN 5         // SDA/SS pin
-#define RST_PIN 17       // RST pin
+#define RST_PIN         22          // Configurable, see wiring above
+#define SS_PIN          5           // Configurable, see wiring above
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
+MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
 void setup() {
-  Serial.begin(115200);   // Initialize serial communication for debugging
-  SPI.begin();            // Initialize SPI bus
-  mfrc522.PCD_Init();     // Initialize the MFRC522 RFID reader
-  
-  Serial.println("RFID Reader Initialized. Waiting for a card...");
+  Serial.begin(115200);   // Initialize serial communications
+  SPI.begin();            // Init SPI bus
+  mfrc522.PCD_Init();     // Init MFRC522
+  Serial.println("Scan a RFID card to see its UID:");
 }
 
 void loop() {
-  // Look for new cards
-  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    // Print the card's UID
-    Serial.print("Card UID: ");
-    for (byte i = 0; i < mfrc522.uid.size; i++) {
-      Serial.print(mfrc522.uid.uidByte[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-
-    // Halt the current card to prevent reading it multiple times
-    mfrc522.PICC_HaltA();
+  // Look for a new card
+  if ( ! mfrc522.PICC_IsNewCardPresent()) {
+    return;
   }
 
-  delay(500);  // Add a short delay to avoid overwhelming the serial monitor
+  // Select one of the cards
+  if ( ! mfrc522.PICC_ReadCardSerial()) {
+    return;
+  }
+
+  // Print UID in hex format
+  Serial.print("UID tag: ");
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+    Serial.print(mfrc522.uid.uidByte[i], HEX);
+  }
+  Serial.println();
+
+  // Halt PICC (stop reading the card)
+  mfrc522.PICC_HaltA();
 }

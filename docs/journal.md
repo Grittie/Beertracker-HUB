@@ -255,13 +255,13 @@ Printed physical product
 
 <br>
 
-**🌐 API Reference** (unsolved)
+**🌐 👩‍🎨 Concept & Design** (unsolved)
 
-**Reviewer:** Test
+**Reviewer:** Nick Schokker
 
-**Feedback:**
+**Feedback:** Looks good to me
 
-**Takeaway:**
+**Takeaway:** Helpful...
 
 <br>
 
