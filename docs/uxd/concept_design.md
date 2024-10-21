@@ -86,3 +86,14 @@ For the digital design of the encasing, I am using **Onshape**, a cloud-based CA
 
 
 All CAD designs related to this project can be found in the **/cad** folder in the root directory of this project, where each design iteration is documented and available for review.
+
+### CAD Design
+<img src="../../assets/images/CAD/full housing.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/front housing.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/back housing.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/front aerial.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/back aerial.png" alt="Alt text" width="650"/>

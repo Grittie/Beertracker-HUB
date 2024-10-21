@@ -214,7 +214,7 @@ Last thing to be implemented was a heartbeat wifi connection to see if the esp32
 
 <br>
 
-## Performance Review Week 6
+## Performance Review Week 5
 <img src="../../assets/images/learningjournal/reviews/IoTw6-Lars.png" alt="performance review" width="500" />
 
 <br>
@@ -227,7 +227,8 @@ This week I was sick and absent.
 
 <br>
 
-## Performance Review Week 7
+## Performance Review Week 6
+
 <img src="../../assets/images/learningjournal/reviews/IoTw7-Lars.png" alt="performance review" width="500" />
 
 <br>
@@ -236,7 +237,17 @@ This week I was sick and absent.
 
 ## Week 7
 
-lorem ipsum
+After healing from my sickness I started developing with the PN532 RFID sensor and making it work with i2c. I had to learn how to handle multiple i2c devices by using their specific i2c addresses. A lot of time was spent working on and debugging the code of the PN532 on multiple platforms to get a solid and consistent scanning workflow. 
+
+The rest of the week was spent fully on UED with using CAD to create a physical housing for the device. I went through 15~ versions of the current design before landing on something that I was happy with and that worked and that I could use forward. It was not only a process of creating a design but also learning CAD itself and learning new techniques to further my project design. This also required a lot of trial and error getting parts to fit well and be placed well to keep enough space for every part.
+
+<img src="../../assets/images/learningjournal/CADDesignIterations.png" alt="Multiple CAD Design iterations" width="500" />
+
+Multiple CAD design iterations
+
+<img src="../../assets/images/learningjournal/CADhousing.jpg" alt="My CAD housing" width="250" />
+
+Printed physical product
 
 <br>
 
