@@ -241,13 +241,17 @@ After healing from my sickness I started developing with the PN532 RFID sensor a
 
 The rest of the week was spent fully on UED with using CAD to create a physical housing for the device. I went through 15~ versions of the current design before landing on something that I was happy with and that worked and that I could use forward. It was not only a process of creating a design but also learning CAD itself and learning new techniques to further my project design. This also required a lot of trial and error getting parts to fit well and be placed well to keep enough space for every part.
 
+<br>
+
 <img src="../../assets/images/learningjournal/CADDesignIterations.png" alt="Multiple CAD Design iterations" width="500" />
 
-Multiple CAD design iterations
+*Multiple CAD design iterations*
+
+<br>
 
 <img src="../../assets/images/learningjournal/CADhousing.jpg" alt="My CAD housing" width="250" />
 
-Printed physical product
+*Printed physical product*
 
 <br>
 
@@ -272,3 +276,5 @@ Printed physical product
 <br>
 
 ---
+
+## Week 8
