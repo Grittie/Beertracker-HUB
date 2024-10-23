@@ -62,7 +62,7 @@ void setup() {
   Serial.println("Starting...");
 
   // Initialize SPI communication
-  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+  SPI.begin();
   Serial.println("SPI Initialized");
 
   // Initialize RFID reader
@@ -84,7 +84,7 @@ void setup() {
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  wifiManager.resetSettings();
+  // wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
@@ -243,9 +243,11 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     String postData = "";
 
     if (dataType == "temperature") {
+      Serial.println("Sending temperature and humidity data to API");
       // Send temperature and humidity data
       postData = "type=temperature&temperature=" + data1 + "&humidity=" + data2;
     } else if (dataType == "card") {
+      Serial.println("Sending card UID data to API");
       // Send card UID data
       postData = "type=card&uid=" + data1;
     } else if (dataType == "connection") {

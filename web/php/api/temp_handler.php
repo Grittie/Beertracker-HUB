@@ -1,12 +1,12 @@
 <?php
-// Get the connection status from the POST request
-$status = $_POST["status"] ?? null;
+$humidity = $_POST["humidity"] ?? null;
+$temperature = $_POST["temperature"] ?? null;
 
-// Check if the status value is valid
-if ($status === "connected" || $status === "disconnected") {
-    // Insert connection status data into the database
-    $stmt = $dbConnection->prepare("INSERT INTO ConnectionStatus (timestamp, status) VALUES (NOW(), ?)");
-    $stmt->bind_param("s", $status);
+// Check if the temperature and humidity values are valid
+if (is_numeric($temperature) && is_numeric($humidity)) {
+    // Insert temperature and humidity data
+    $stmt = $dbConnection->prepare("INSERT INTO InternalTemperature (timestamp, temperature, humidity) VALUES (NOW(), ?, ?)");
+    $stmt->bind_param("dd", $temperature, $humidity);
 
     // Execute the statement
     if ($stmt->execute()) {
@@ -18,6 +18,6 @@ if ($status === "connected" || $status === "disconnected") {
     // Close the statement
     $stmt->close();
 } else {
-    echo json_encode(array("status" => "error", "message" => "Invalid connection status data"));
+    echo json_encode(array("status" => "error", "message" => "Invalid temperature or humidity data"));
 }
 ?>
