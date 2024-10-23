@@ -13,7 +13,7 @@
 // Pin definitions
 // SPI Pins
 #define SS_PIN 5           // SDA/SS Pin for SPI
-#define RST_PIN 23          // Reset Pin for SPI
+#define RST_PIN 17          // Reset Pin for SPI
 #define SCK_PIN 18          // SCK Pin for SPI
 #define MOSI_PIN 23         // MOSI Pin for SPI
 #define MISO_PIN 19         // MISO Pin for SPI
@@ -84,7 +84,7 @@ void setup() {
   WiFiManager wifiManager;
 
   // This line resets saved Wi-Fi credentials
-  // wifiManager.resetSettings();
+  wifiManager.resetSettings();
   
   // Changes the theme to dark mode
   wifiManager.setClass("invert");
