@@ -145,8 +145,9 @@ void rfidTask(void * pvParameters) {
       Serial.println("Card detected: " + cardUID);
 
       cardDetected = true;  // Set flag to indicate card is detected for feedback task
+
       // Send the card UID to the API and get the username
-      sendDataToAPI("card", cardUID, "");
+      sendDataToAPI("card", cardUID, String(currentMenuOption));
 
       // Halt the PICC to prevent repeated scans
       mfrc522.PICC_HaltA();
@@ -322,7 +323,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     } else if (dataType == "card") {
       Serial.println("Sending card UID data to API");
       // Send card UID data
-      postData = "type=card&uid=" + data1;
+      postData = "type=card&uid=" + data1 + "&menuOption=" + data2;
     } else if (dataType == "connection") {
       postData = "type=connection&status=" + data1;
     }
@@ -352,7 +353,13 @@ void sendDataToAPI(String dataType, String data1, String data2) {
             // Display the username on the LCD
             lcd.clear();
             lcd.setCursor(0, 0);
-            lcd.print("Welcome,");
+            if (currentMenuOption == 0) { // Clock In
+              lcd.print("Welcome,");
+            } else if (currentMenuOption == 1) { // Clock Out
+              lcd.print("Bye,");
+            } else if (currentMenuOption == 2) { // Add Pitcher
+              lcd.print("+1 Pitcher,");
+            }
             lcd.setCursor(0, 1);
             lcd.print(userName);  // Display the username on the second line
 
