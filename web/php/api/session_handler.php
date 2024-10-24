@@ -83,20 +83,29 @@ if ($uid && $option !== NULL) {
             }
         } elseif ($option == "2") {
             // Check if a session exists for today's date
-            $stmt = $dbConnection->prepare("SELECT SessionID, CheckOutTime FROM Sessions WHERE UserID = ? AND SessionDate = ?");
+            $stmt = $dbConnection->prepare("SELECT SessionID, CheckOutTime, Pitchers FROM Sessions WHERE UserID = ? AND SessionDate = ?");
             $stmt->bind_param("is", $userID, $currentDate);
             $stmt->execute();
             $stmt->store_result();
-
+        
             if ($stmt->num_rows > 0) {
-                $stmt->bind_result($sessionID, $checkOutTime);
+                $stmt->bind_result($sessionID, $checkOutTime, $pitcherCount);
                 $stmt->fetch();
                 $stmt->close();
-
+        
+                // Check if the user is checked in (i.e., CheckOutTime should be null)
                 if ($checkOutTime === null) {
-                    // User is checked in, allow adding a pitcher
-                    // Here you would include the logic to add a pitcher, such as updating the database
-                    echo json_encode(array("status" => "success", "action" => "added_pitcher", "message" => "Pitcher added", "name" => getUserName($dbConnection, $userID)));
+                    // User is checked in, increment the pitcher count
+                    $pitcherCount++; // Increment the current pitcher count
+                    $stmt = $dbConnection->prepare("UPDATE Sessions SET Pitchers = ? WHERE SessionID = ?");
+                    $stmt->bind_param("ii", $pitcherCount, $sessionID);
+                    $stmt->execute();
+        
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(array("status" => "success", "action" => "added_pitcher", "message" => "Pitcher added", "name" => getUserName($dbConnection, $userID), "newPitcherCount" => $pitcherCount));
+                    } else {
+                        echo json_encode(array("status" => "error", "message" => "Failed to add pitcher"));
+                    }
                 } else {
                     echo json_encode(array("status" => "error", "message" => "User already checked out, cannot add pitcher"));
                 }
