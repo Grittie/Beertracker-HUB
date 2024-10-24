@@ -247,6 +247,12 @@ void checkWiFiConnection(void * pvParameters) {
 
 void menuTask(void *pvParameters) {
   Serial.println("Menu Task Started");
+
+  // Variable to track the last selection time
+  unsigned long lastSelectionTime = 0;
+  const unsigned long selectionDisplayDuration = 3000; // 3 seconds in milliseconds
+  bool selectionActive = false; // Flag to check if an option is selected
+
   while (true) {
     // Check if LEFT button is pressed
     if (digitalRead(DECREASE_BUTTON) == LOW) {
@@ -256,7 +262,7 @@ void menuTask(void *pvParameters) {
         currentMenuOption = 2;  // Wrap around to the last option (Add Pitcher)
       }
       menuUpdated = true;
-      vTaskDelay(300);  // Debounce delay
+      vTaskDelay(150 / portTICK_PERIOD_MS); // Moderate debounce delay
     }
 
     // Check if RIGHT button is pressed
@@ -267,29 +273,36 @@ void menuTask(void *pvParameters) {
         currentMenuOption = 0;  // Wrap around to the first option (Clock In)
       }
       menuUpdated = true;
-      vTaskDelay(300);  // Debounce delay
+      vTaskDelay(150 / portTICK_PERIOD_MS); // Moderate debounce delay
     }
 
     // If menu updated, show the new option on the LCD
     if (menuUpdated) {
+      tone(BUZZER_PIN, 1000);  // Play a tone to indicate menu change
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Option:");
       lcd.setCursor(0, 1);
       lcd.print(menuOptions[currentMenuOption]);
-
-      // Show the current option for 3 seconds
-      vTaskDelay(3000 / portTICK_PERIOD_MS);
+      vTaskDelay(100);             
+      noTone(BUZZER_PIN);
+      
+      // Mark the selection as active and record the time
+      selectionActive = true;
+      lastSelectionTime = millis();
       menuUpdated = false;
     }
 
+    // Check if selection is active and duration has passed
+    if (selectionActive && (millis() - lastSelectionTime >= selectionDisplayDuration)) {
+      lcd.clear(); // Clear the LCD after the duration
+      selectionActive = false; // Reset selection state
+    }
+
     // Small delay before the next loop iteration
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS); // Keep it responsive
   }
 }
-
-
-
 
 // Function to send data to API
 void sendDataToAPI(String dataType, String data1, String data2) {
