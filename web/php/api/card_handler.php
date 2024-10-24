@@ -1,8 +1,9 @@
 <?php
 $uid = $_POST["uid"] ?? null;
+$option = $_POST["option"] ?? null; // Get the action option
 
-// Check if the UID is provided
-if ($uid) {
+// Check if the UID and option are provided
+if ($uid && $option) {
     // Look for the card UID in the Cards table
     $stmt = $dbConnection->prepare("SELECT UserID FROM Cards WHERE RFID_Tag = ?");
     $stmt->bind_param("s", $uid);
@@ -25,9 +26,8 @@ if ($uid) {
         if ($stmt->num_rows > 0) {
             $stmt->bind_result($userName);
             $stmt->fetch();
-
             // Return the User Name to the ESP32
-            echo json_encode(array("status" => "success", "name" => $userName));
+            echo json_encode(array("status" => "success", "name" => $userName, "option" => $option));
         } else {
             echo json_encode(array("status" => "error", "message" => "User not found"));
         }
@@ -39,6 +39,6 @@ if ($uid) {
         echo json_encode(array("status" => "error", "message" => "Card not found"));
     }
 } else {
-    echo json_encode(array("status" => "error", "message" => "UID not provided"));
+    echo json_encode(array("status" => "error", "message" => "UID or option not provided"));
 }
 ?>

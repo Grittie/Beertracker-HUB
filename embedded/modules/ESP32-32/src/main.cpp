@@ -323,7 +323,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     } else if (dataType == "card") {
       Serial.println("Sending card UID data to API");
       // Send card UID data
-      postData = "type=card&uid=" + data1 + "&menuOption=" + data2;
+      postData = "type=card&uid=" + data1 + "&option=" + data2;
     } else if (dataType == "connection") {
       postData = "type=connection&status=" + data1;
     }
@@ -352,7 +352,6 @@ void sendDataToAPI(String dataType, String data1, String data2) {
 
             // Display the username on the LCD
             lcd.clear();
-            lcd.setCursor(0, 0);
             if (currentMenuOption == 0) { // Clock In
               lcd.print("Welcome,");
             } else if (currentMenuOption == 1) { // Clock Out
@@ -367,19 +366,52 @@ void sendDataToAPI(String dataType, String data1, String data2) {
             delay(2000);  // Wait 2 seconds
             lcd.clear();
           } else {
-            Serial.println("Error: User not found");
+            // Handle various error statuses
+            const char* message = doc["message"];
+            Serial.println("Error: " + String(message));
+
+            // Display the appropriate error message on the LCD
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Error:");
+            lcd.setCursor(0, 1);
+            lcd.print(message);  // Display the error message
+
+            // Keep the text visible for a short period
+            delay(2000);  // Wait 2 seconds
+            lcd.clear();
           }
         } else {
           Serial.println("Failed to parse response");
+          // Handle parsing error
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("Parse Error");
+          delay(2000);  // Wait 2 seconds
+          lcd.clear();
         }
       }
     } else {
       Serial.print("Error on sending POST: ");
       Serial.println(httpResponseCode);
+      // Display error on the LCD
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("HTTP Error:");
+      lcd.setCursor(0, 1);
+      lcd.print(httpResponseCode);
+      delay(2000);  // Wait 2 seconds
+      lcd.clear();
     }
 
     http.end();  // End the HTTP connection to free up resources
   } else {
     Serial.println("Error: WiFi not connected");
+    // Display WiFi error on the LCD
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("WiFi Error");
+    delay(2000);  // Wait 2 seconds
+    lcd.clear();
   }
 }
