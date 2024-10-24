@@ -26,8 +26,8 @@
 #define BUZZER_PIN 25       // Buzzer Pin
 
 // Button Pins
-#define DECREASE_BUTTON 20  // Button Pin
-#define INCREASE_BUTTON 21  // Button Pin
+#define DECREASE_BUTTON 15  // Button Pin - 
+#define INCREASE_BUTTON 2  // Button Pin +
 
 // Temperature Sensor Pin
 #define TEMP_SENSOR 26       // Analog Pin
@@ -49,12 +49,22 @@ String cardUID = "";
 unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconnection attempt
 const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
 
+// Server IP
+String serverIP = "http://145.92.189.155";
+
+// Menu variables
+volatile int currentMenuOption = 0;  // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
+const char* menuOptions[] = {"Clock In", "Clock Out", "Add Pitcher"};  // Menu options array
+volatile bool menuUpdated = false;  // Flag to indicate menu option changed
+
+
 // Forward declarations of task functions
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
 void checkWiFiConnection(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
+void menuTask(void * pvParameters);
 
 void setup() {
   // Start serial communication
@@ -78,7 +88,11 @@ void setup() {
   digitalWrite(SCAN_LED, LOW);    
   pinMode(CONNECTION_LED, OUTPUT);       
   digitalWrite(CONNECTION_LED, LOW);          
-  pinMode(BUZZER_PIN, OUTPUT);  
+  pinMode(BUZZER_PIN, OUTPUT);
+
+  // Intialize buttons as inputs
+  pinMode(DECREASE_BUTTON, INPUT_PULLUP);
+  pinMode(INCREASE_BUTTON, INPUT_PULLUP);
 
   // Create a Wi-Fi Manager object
   WiFiManager wifiManager;
@@ -109,6 +123,7 @@ void setup() {
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  xTaskCreate(menuTask, "Menu Task", 10000, NULL, 2, NULL);  // Task for the menu system
   // xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
 }
 
@@ -230,6 +245,51 @@ void checkWiFiConnection(void * pvParameters) {
   }
 }
 
+void menuTask(void *pvParameters) {
+  Serial.println("Menu Task Started");
+  while (true) {
+    // Check if LEFT button is pressed
+    if (digitalRead(DECREASE_BUTTON) == LOW) {
+      Serial.println("Minus (LEFT) button pressed");
+      currentMenuOption--;
+      if (currentMenuOption < 0) {
+        currentMenuOption = 2;  // Wrap around to the last option (Add Pitcher)
+      }
+      menuUpdated = true;
+      vTaskDelay(300);  // Debounce delay
+    }
+
+    // Check if RIGHT button is pressed
+    if (digitalRead(INCREASE_BUTTON) == LOW) {
+      Serial.println("Plus (RIGHT) button pressed");
+      currentMenuOption++;
+      if (currentMenuOption > 2) {
+        currentMenuOption = 0;  // Wrap around to the first option (Clock In)
+      }
+      menuUpdated = true;
+      vTaskDelay(300);  // Debounce delay
+    }
+
+    // If menu updated, show the new option on the LCD
+    if (menuUpdated) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Option:");
+      lcd.setCursor(0, 1);
+      lcd.print(menuOptions[currentMenuOption]);
+
+      // Show the current option for 3 seconds
+      vTaskDelay(3000 / portTICK_PERIOD_MS);
+      menuUpdated = false;
+    }
+
+    // Small delay before the next loop iteration
+    vTaskDelay(50 / portTICK_PERIOD_MS);
+  }
+}
+
+
+
 
 // Function to send data to API
 void sendDataToAPI(String dataType, String data1, String data2) {
@@ -237,7 +297,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     HTTPClient http;
     http.setTimeout(5000);  // Set a 5-second timeout for the request
 
-    http.begin("http://145.92.189.155/php/api.php");  // Specify the URL
+    http.begin(serverIP + "/php/api.php"); // Specify the URL of the API endpoint
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // Set the POST content type
 
     String postData = "";
