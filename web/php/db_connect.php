@@ -3,6 +3,9 @@ require_once '/var/www/html/vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
+// Set the default timezone
+date_default_timezone_set('Europe/Amsterdam');
+
 // Get the directory path
 $directoryPath = __DIR__ . '/../../';
 

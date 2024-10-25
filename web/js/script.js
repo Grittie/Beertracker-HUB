@@ -1,4 +1,4 @@
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Fetch connection status and update the UI
     fetchConnectionStatus();
 
@@ -10,7 +10,14 @@ window.addEventListener('load', function() {
 
     // Fetch session data and update the UI
     fetchSessionData();
+
+    // Fetch historical temperature and humidity data
+    fetchTemperatureHumidityData();
 });
+
+// Global variables for session data
+let sessionsByDate = {}; // Global variable to hold sessions grouped by date
+let latestDate = ''; // To store the latest date for default selection
 
 // Function to fetch the connection status and update the UI
 function fetchConnectionStatus() {
@@ -46,23 +53,23 @@ function fetchUserData() {
             if (data.success) {
                 data.users.forEach(user => {
                     const row = document.createElement('tr');
-                    
+
                     const idCell = document.createElement('td');
                     idCell.textContent = user.UserID;
                     row.appendChild(idCell);
-                    
+
                     const nameCell = document.createElement('td');
                     nameCell.textContent = user.name;
                     row.appendChild(nameCell);
-                    
+
                     const roleCell = document.createElement('td');
                     roleCell.textContent = user.role;
                     row.appendChild(roleCell);
-                    
+
                     const cardIdCell = document.createElement('td');
                     cardIdCell.textContent = user.RFID_Tag;
                     row.appendChild(cardIdCell);
-                    
+
                     usersTableBody.appendChild(row);
                 });
             } else {
@@ -105,18 +112,19 @@ function fetchTemperatureData() {
         });
 }
 
-
 function fetchSessionData() {
     fetch('php/get_session.php')
         .then(response => response.json())
         .then(data => {
-            const sessionsContainer = document.getElementById('sessions');
+            const sessionsContainer = document.getElementById('sessions-body'); // Update to the new tbody ID
             sessionsContainer.innerHTML = ''; // Clear any existing session data
+            const dateFilter = document.getElementById('dateFilter');
+            dateFilter.innerHTML = ''; // Clear existing options
 
             if (data.success) {
-                const sessionsByDate = {};
-
                 // Group sessions by date
+                sessionsByDate = {}; // Reset the sessionsByDate object
+
                 data.sessions.forEach(session => {
                     const sessionDate = session.SessionDate;
 
@@ -126,67 +134,165 @@ function fetchSessionData() {
                     sessionsByDate[sessionDate].push(session);
                 });
 
-                // Populate the table with grouped sessions
+                // Populate the date dropdown
                 Object.keys(sessionsByDate).forEach(date => {
-                    // Create a row for the date (spanning the columns)
-                    const dateRow = document.createElement('tr');
-                    const dateCell = document.createElement('td');
-                    dateCell.colSpan = 7; // Adjust based on the number of columns
-                    dateCell.textContent = date;
-                    dateCell.className = 'session-date'; // Optional: add a class for styling
-                    dateRow.appendChild(dateCell);
-                    sessionsContainer.appendChild(dateRow);
-
-                    // Create rows for each session on that date
-                    sessionsByDate[date].forEach(session => {
-                        const row = document.createElement('tr');
-
-                        // Populate row with session data
-                        const idCell = document.createElement('td');
-                        idCell.textContent = session.SessionID;
-                        row.appendChild(idCell);
-
-                        const userCell = document.createElement('td');
-                        userCell.textContent = session.name;
-                        row.appendChild(userCell);
-
-                        const dateCell = document.createElement('td');
-                        dateCell.textContent = session.SessionDate;
-                        row.appendChild(dateCell);
-
-                        const checkInCell = document.createElement('td');
-                        checkInCell.textContent = session.CheckInTime;
-                        row.appendChild(checkInCell);
-
-                        const checkOutCell = document.createElement('td');
-                        checkOutCell.textContent = session.CheckOutTime;
-                        row.appendChild(checkOutCell);
-
-                        const durationCell = document.createElement('td');
-                        durationCell.textContent = session.TotalHours;
-                        row.appendChild(durationCell);
-
-                        const pitcherCell = document.createElement('td');
-                        pitcherCell.textContent = session.Pitchers;
-                        row.appendChild(pitcherCell);
-
-                        sessionsContainer.appendChild(row);
-                    });
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = date;
+                    dateFilter.appendChild(option);
                 });
+
+                // Set the latest date as default
+                latestDate = Object.keys(sessionsByDate).sort().reverse()[0]; // Get the latest date
+                dateFilter.value = latestDate;
+
+                // Render sessions for the latest date by default
+                renderSessions(latestDate);
             } else {
                 const errorRow = document.createElement('tr');
                 const errorCell = document.createElement('td');
-                errorCell.colSpan = 7;
+                errorCell.colSpan = 8; // Update the colspan to match the new table
                 errorCell.textContent = `Error: ${data.error}`;
-                sessionsContainer.appendChild(errorCell);
+                sessionsContainer.appendChild(errorRow);
             }
         })
         .catch(error => {
             console.error('Error:', error);
             const errorRow = document.createElement('tr');
             const errorCell = document.createElement('td');
-            errorCell.colSpan = 7;
+            errorCell.colSpan = 8; // Update the colspan to match the new table
             errorCell.textContent = `Error: ${error}`;
-            document.getElementById('sessions').appendChild(errorRow);
+            document.getElementById('sessions-body').appendChild(errorRow);
         });
+}
+
+// Function to render sessions based on the selected date
+function renderSessions(selectedDate) {
+    const sessionsContainer = document.getElementById('sessions-body');
+    sessionsContainer.innerHTML = ''; // Clear existing session data
+
+    if (sessionsByDate[selectedDate]) {
+        // Create a row for the date (spanning the columns)
+        const dateRow = document.createElement('tr');
+        const dateCell = document.createElement('td');
+        dateCell.colSpan = 8; // Adjust based on the number of columns
+        dateCell.textContent = selectedDate;
+        dateCell.style.fontWeight = 'bold'; // Make date row bold
+        sessionsContainer.appendChild(dateRow);
+
+        // Create rows for each session on that date
+        sessionsByDate[selectedDate].forEach(session => {
+            const row = document.createElement('tr');
+
+            // Populate row with session data
+            const idCell = document.createElement('td');
+            idCell.textContent = session.SessionID;
+            row.appendChild(idCell);
+
+            const userCell = document.createElement('td');
+            userCell.textContent = session.UserID; // Ensure to use UserID from your data
+            row.appendChild(userCell);
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = session.name;
+            row.appendChild(nameCell);
+
+            const dateCell = document.createElement('td');
+            dateCell.textContent = session.SessionDate;
+            row.appendChild(dateCell);
+
+            const checkInCell = document.createElement('td');
+            checkInCell.textContent = session.CheckInTime;
+            row.appendChild(checkInCell);
+
+            const checkOutCell = document.createElement('td');
+            checkOutCell.textContent = session.CheckOutTime || 'N/A'; // Handle empty check-out
+            row.appendChild(checkOutCell);
+
+            const durationCell = document.createElement('td');
+            durationCell.textContent = session.TotalHours;
+            row.appendChild(durationCell);
+
+            const pitcherCell = document.createElement('td');
+            pitcherCell.textContent = session.Pitchers;
+            row.appendChild(pitcherCell);
+
+            sessionsContainer.appendChild(row);
+        });
+    } else {
+        const errorRow = document.createElement('tr');
+        const errorCell = document.createElement('td');
+        errorCell.colSpan = 8; // Update the colspan to match the new table
+        errorCell.textContent = 'No sessions available for this date.';
+        sessionsContainer.appendChild(errorRow);
+    }
+}
+
+// Function to filter sessions based on selected date
+function filterSessions() {
+    const selectedDate = document.getElementById('dateFilter').value;
+    renderSessions(selectedDate);
+}
+
+// New function to fetch historical temperature and humidity data
+function fetchTemperatureHumidityData() {
+    fetch('php/get_temperature_humidity.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const timestamps = data.data.map(entry => entry.timestamp);
+                const temperatures = data.data.map(entry => entry.temperature);
+                const humidities = data.data.map(entry => entry.humidity);
+
+                // Call the function to create the chart with the retrieved data
+                createTemperatureHumidityChart(timestamps, temperatures, humidities);
+            } else {
+                console.error("Error fetching temperature and humidity data:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+function createTemperatureHumidityChart(timestamps, temperatures, humidities) {
+    const ctx = document.getElementById('temperatureHumidityChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps, // X-axis labels (timestamps)
+            datasets: [
+                {
+                    label: 'Temperature (°C)',
+                    data: temperatures,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    fill: false,
+                },
+                {
+                    label: 'Humidity (%)',
+                    data: humidities,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: false,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Timestamp'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
 }

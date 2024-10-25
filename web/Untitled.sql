@@ -1,1 +1,0 @@
-SELECT * FROM smart_time_registration.InternalTemperature;
