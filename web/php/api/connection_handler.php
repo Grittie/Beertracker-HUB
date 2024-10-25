@@ -5,18 +5,18 @@ $status = $_POST["status"] ?? null;
 // Check if the status and deviceId values are valid
 if (($status === "connected" || $status === "disconnected")) {
     // Insert connection status data into the database
-    $stmt = $dbConnection->prepare("INSERT INTO ConnectionStatus (timestamp, status) VALUES (NOW(), ?)");
-    $stmt->bind_param("ss", $deviceId, $status);
+    $statement = $dbConnection->prepare("INSERT INTO ConnectionStatus (timestamp, status) VALUES (NOW(), ?)");
+    $statement->bind_param("ss", $deviceId, $status);
 
     // Execute the statement
-    if ($stmt->execute()) {
+    if ($statement->execute()) {
         echo json_encode(array("status" => "success"));
     } else {
-        echo json_encode(array("status" => "error", "message" => $stmt->error));
+        echo json_encode(array("status" => "error", "message" => $statement->error));
     }
 
     // Close the statement
-    $stmt->close();
+    $statement->close();
 } else {
     echo json_encode(array("status" => "error", "message" => "Invalid connection status data or missing deviceId"));
 }

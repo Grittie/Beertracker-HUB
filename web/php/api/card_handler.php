@@ -5,27 +5,27 @@ $option = $_POST["option"] ?? null; // Get the action option
 // Check if the UID and option are provided
 if ($uid && $option) {
     // Look for the card UID in the Cards table
-    $stmt = $dbConnection->prepare("SELECT UserID FROM Cards WHERE RFID_Tag = ?");
-    $stmt->bind_param("s", $uid);
-    $stmt->execute();
-    $stmt->store_result();
+    $statement = $dbConnection->prepare("SELECT UserID FROM Cards WHERE RFID_Tag = ?");
+    $statement->bind_param("s", $uid);
+    $statement->execute();
+    $statement->store_result();
 
     // If the card UID is found
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($userID);
-        $stmt->fetch();
-        $stmt->close();
+    if ($statement->num_rows > 0) {
+        $statement->bind_result($userID);
+        $statement->fetch();
+        $statement->close();
 
         // Now look up the User Name from the Users table using the UserID
-        $stmt = $dbConnection->prepare("SELECT Name FROM Users WHERE UserID = ?");
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $stmt->store_result();
+        $statement = $dbConnection->prepare("SELECT Name FROM Users WHERE UserID = ?");
+        $statement->bind_param("i", $userID);
+        $statement->execute();
+        $statement->store_result();
 
         // If the UserID is found in the Users table
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($userName);
-            $stmt->fetch();
+        if ($statement->num_rows > 0) {
+            $statement->bind_result($userName);
+            $statement->fetch();
             // Return the User Name to the ESP32
             echo json_encode(array("status" => "success", "name" => $userName, "option" => $option));
         } else {
@@ -33,7 +33,7 @@ if ($uid && $option) {
         }
 
         // Close the statement
-        $stmt->close();
+        $statement->close();
     } else {
         // If the card is not found
         echo json_encode(array("status" => "error", "message" => "Card not found"));
