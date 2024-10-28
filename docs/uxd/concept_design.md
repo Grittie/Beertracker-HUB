@@ -97,3 +97,9 @@ All CAD designs related to this project can be found in the **/cad** folder in t
 <img src="../../assets/images/CAD/front aerial.png" alt="Alt text" width="650"/>
 
 <img src="../../assets/images/CAD/back aerial.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/full lcd housing.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/front lcd housing.png" alt="Alt text" width="650"/>
+
+<img src="../../assets/images/CAD/back lcd housing.png" alt="Alt text" width="650"/>
