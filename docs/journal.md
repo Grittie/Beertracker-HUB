@@ -275,6 +275,48 @@ The rest of the week was spent fully on UED with using CAD to create a physical 
 
 <br>
 
+Made great progress today and the performance review looks good, sadly I didn't request enough feedback
+
 ---
 
 ## Week 8
+
+Week 8 begun with looking into my research for my project, I have two main subjects I'm working on further development with PCB design and Accesibility in UX, specifically the less fortunate in sight. In addition to exploring PCB design and accessibility, I investigating how humans react to specific sounds, which can be useful for implementing a buzzer in my project to deliver positive or negative feedback through different tones. Furthermore, I'm considering how Braille could be incorporated to enhance accessibility, alongside potential voice activation features that would allow users to interact with the device hands-free and without needing sight. This combination could significantly improve usability for visually impaired individuals. To test my product on accesibility aswell I started making up user tests for people to test my design and find edge cases and issue's people could have with the workflow of my device.
+
+I worked on implementing the buttons to work smoothly in my embedded code by giving a small enough delay for allowing people to hold down the button to cycle and using LCD visual and buzzer audible feedback on changing options. 
+
+This week also included a massive website front-end overhaul using bootstrap, creating multiple tabs to divide the website and having a place for a dashboard to show fun and necessary information.
+
+<img src="../../assets/images/learningjournal/bootstrap-website.png" alt="bootstrap-website overhaul" width="500" />
+
+This week also involved significant CAD work, focusing on creating a custom bracket for the LCD that securely latches onto the main device. It was a challenging task to design a bracket that worked seamlessly within the device’s size constraints, requiring careful adjustments to ensure both stability and functionality.
+
+<img src="../../assets/images/learningjournal/lcd-bracket.png" alt="LCD bracket" width="500" />
+
+For the main device, I experimented with a fun drink-pattern design. I started by sketching and extruding patterns in alternating directions, then mirrored them for symmetry. Using Boolean tools, I refined the pattern by selectively intersecting and subtracting parts to create a cohesive, layered effect that mimics a bubbly drink texture.
+
+Creating the drink pattern turned out to be quite a challenge, largely due to the main device's rounded corners. Since the fillets were made as sketch fillets, working around them required careful alignment and extra precision to get the pattern to flow seamlessly across the curved edges. Integrating each layer without disrupting the filleted corners added a lot of complexity, but with iterative adjustments, I managed to achieve a cohesive design that maintained the bubbly, drink-like aesthetic.
+
+<img src="../../assets/images/learningjournal/cad-design-drink.png" alt="The drink design of the lcd bracket" width="500" />
+
+<br>
+
+### Feedback
+
+<br>
+
+**🌐 👩‍🎨 Concept & Design** (unsolved)
+
+**Reviewer:**
+
+**Feedback:** 
+
+**Takeaway:** 
+
+<br>
+
+## Performance Review Week 8
+
+<img src="../../assets/images/learningjournal/reviews/IoTw9-Lars.png" alt="performance review" width="500" />
+
+<br>
