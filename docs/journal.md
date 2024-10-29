@@ -307,7 +307,7 @@ Creating the drink pattern turned out to be quite a challenge, largely due to th
 
 **🌐 👩‍🎨 Concept & Design** (unsolved)
 
-**Reviewer:**
+**Reviewer:** Koen Lammers
 
 **Feedback:** 
 
