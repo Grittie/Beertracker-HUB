@@ -7,13 +7,13 @@ This document outlines the hardware *and* functional requirements for the **Smar
 ## Hardware Components
 
 - **Microcontroller**: ESP32-S3-DevKitC-1-N8R8
-<br> <img src="https://m.media-amazon.com/images/I/61AQzpQyIhL._AC_UF894,1000_QL80_.jpg" alt="Image of an ESP32" width="200" />
+<br> <img src="../../assets/images/embedded/esp32s3.jpg" alt="Image of an ESP32" width="200" />
 
 - **RFID Sensor**: RFID-RC522 for scanning HVA IDs
-<br> <img src="https://components101.com/sites/default/files/components/RC522-RFID-module.jpg" alt="Image of a RFID-RC522 Sensor" width="250" />
+<br> <img src="../../assets/images/embedded/RC522-RFID-module.jpg" alt="Image of a RFID-RC522 Sensor" width="250" />
 
 - **LCD Display**: 16x2 LCD with I2C Backpack
-<br> <img src="https://cdn.bodanius.com/media/1/9ba102557_16x2-karakters-lcd-module-blauw_900x600.png" alt="Image of a 16x2 LCD" width="250" />
+<br> <img src="../../assets/images/embedded/lcdmodule.png" alt="Image of a 16x2 LCD" width="250" />
 
 - **Buzzer**: For feedback on card scan
 - **LEDs**: Multiple for system status indication

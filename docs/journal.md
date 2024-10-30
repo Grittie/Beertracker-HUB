@@ -56,7 +56,7 @@ To secure the website and database I didn't want to have my credentials hard cod
 
 Having created a solid basis for the website I expanded my embedded part by adding a new output, the lcd screen. Getting it to work was a lot of trial and error. I used the i2c backpack which I had to solder unto the lcd screen itself. Using this I significantly lowered the amount of pins required to get the LCD display to work. My biggest struggle was to get the lcd display sufficiently powered since it requires 5v and the esp32 only has 3.3v output pins. This required me to use the 9v battery included in the IoT kit but not wanting to overpower the display I had to come to a solution to get the power from 9v to 5v for which I used a mini DCDC converter which gave me an output of 5v. 
 
-<img src="add-image-of-dcdc-setup" alt="setup" width="500" />
+<img src="../../assets/images/learningjournal/dcdc.png" alt="dcdc setup" width="500" />
 
 Lastly I have gotten my esp32 connected to the wifi using a wifi manager which makes it so I again don't have any potential important info saved in the code. I sketched out some more designs for my device and thought of fun additions and created the basis for my API. Which will handle the data calls from device to device.
 
@@ -261,7 +261,7 @@ The rest of the week was spent fully on UED with using CAD to create a physical 
 
 **🌐 👩‍🎨 Concept & Design** (unsolved)
 
-**Reviewer:** Nick Schokker
+**Reviewer:** Nick Schokkers
 
 **Feedback:** Looks good to me
 
@@ -272,7 +272,7 @@ The rest of the week was spent fully on UED with using CAD to create a physical 
 ## Performance Review Week 7
 
 <img src="../../assets/images/learningjournal/reviews/IoTw8-Lars.png" alt="performance review" width="500" />
-
+glu
 <br>
 
 Made great progress today and the performance review looks good, sadly I didn't request enough feedback
