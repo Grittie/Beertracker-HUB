@@ -13,6 +13,9 @@ window.addEventListener('load', function () {
 
     // Fetch historical temperature and humidity data
     fetchTemperatureHumidityData();
+
+    // Fetch heartbeat status and update the UI
+    fetchHeartbeatStatus();
 });
 
 // Global variables for session data
@@ -295,4 +298,26 @@ function createTemperatureHumidityChart(timestamps, temperatures, humidities) {
             }
         }
     });
+}
+
+function fetchHeartbeatStatus() {
+    fetch('php/get_heartbeat.php')
+        .then(response => response.json())
+        .then(data => {
+            const heartbeatStatusDisplay = document.getElementById('heartbeat-status'); // Ensure this element exists in your HTML
+            if (data.success) {
+                const statusMessage = data.status === "CONNECTED" ? "Connected" : "Disconnected";
+                heartbeatStatusDisplay.innerHTML = statusMessage;
+                heartbeatStatusDisplay.className = data.status === "CONNECTED" ? "success" : "failed";
+            } else {
+                heartbeatStatusDisplay.innerHTML = `Error fetching heartbeat status: ${data.message}`;
+                heartbeatStatusDisplay.className = "failed";
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching heartbeat status:', error);
+            const heartbeatStatusDisplay = document.getElementById('heartbeat-status');
+            heartbeatStatusDisplay.innerHTML = `Error: ${error}`;
+            heartbeatStatusDisplay.className = "failed";
+        });
 }

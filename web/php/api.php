@@ -12,6 +12,8 @@ if ($type === 'temperature') {
     require_once 'api/session_handler.php';
 } elseif ($type === 'connection') {
     require_once 'api/connection_handler.php';
+} elseif ($type === 'heartbeat') {
+    require_once 'api/heartbeat_handler.php';
 } else {
     echo json_encode(array("status" => "error", "message" => "Invalid type or missing data"));
 }

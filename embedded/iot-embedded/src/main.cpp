@@ -53,7 +53,7 @@ const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting 
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
-void checkWiFiConnection(void * pvParameters);
+void heartbeatTask(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
 
 void setup() {
@@ -109,7 +109,7 @@ void setup() {
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
-  // xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
+  xTaskCreate(heartbeatTask, "Heartbeat Task", 10000, NULL, 4, NULL); // Task for heartbeat
 }
 
 void loop() {
@@ -201,32 +201,16 @@ void temperatureTask(void * pvParameters) {
 }
 
 
-// Function to check WiFi
-void checkWiFiConnection(void * pvParameters) {
-  if (WiFi.status() != WL_CONNECTED) {
-    unsigned long currentMillis = millis();
-    
-    // Attempt reconnection every `reconnectInterval` milliseconds
-    if (currentMillis - lastReconnectAttempt >= reconnectInterval) {
-      lastReconnectAttempt = currentMillis;
-      
-      Serial.println("Wi-Fi disconnected, attempting to reconnect...");
-      digitalWrite(CONNECTION_LED, LOW);
-      
-      // Attempt to reconnect
-      if (WiFi.reconnect()) {
-        Serial.println("Reconnected to Wi-Fi");
-        digitalWrite(CONNECTION_LED, HIGH);
+// Function to check heartbeat
+void heartbeatTask(void * pvParameters) {
+  Serial.println("Heartbeat Task Started");
+  while (true) {
+    String heartbeat = "Active";
+    Serial.print("Checking ESP32 heartbeat... ");
+    sendDataToAPI("heartbeat", heartbeat, "");
 
-        // Notify the backend that the ESP32 is connected
-        sendDataToAPI("connection", "connected", "");
-      } else {
-        Serial.println("Failed to reconnect");
-
-        // Notify the backend that the ESP32 is disconnected
-        sendDataToAPI("connection", "disconnected", "");
-      }
-    }
+    // Delay for 15 seconds (15000 ms)
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
   }
 }
 
@@ -242,6 +226,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
 
     String postData = "";
 
+    // Check the data type and prepare the POST data
     if (dataType == "temperature") {
       Serial.println("Sending temperature and humidity data to API");
       // Send temperature and humidity data
@@ -252,6 +237,9 @@ void sendDataToAPI(String dataType, String data1, String data2) {
       postData = "type=card&uid=" + data1;
     } else if (dataType == "connection") {
       postData = "type=connection&status=" + data1;
+    } else if (dataType == "heartbeat") {
+      Serial.println("Sending ESP32 heartbeat to API");
+      postData = "type=heartbeat&status=" + data1;
     }
 
     // Send the POST request
