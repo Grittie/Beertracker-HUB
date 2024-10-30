@@ -55,6 +55,18 @@ CREATE TABLE ConnectionStatus (
     status VARCHAR(20)
 );
 
+CREATE TABLE Heartbeats (
+    HeartbeatID INT AUTO_INCREMENT PRIMARY KEY,
+    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Status VARCHAR(20) DEFAULT 'Active'
+);
+
+CREATE TABLE ActivityLog (
+    ActivityID INT AUTO_INCREMENT PRIMARY KEY,
+    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ActivityType VARCHAR(50) NOT NULL,
+    Description VARCHAR(255)
+);
 
 INSERT INTO Users (Name, Role) 
 VALUES ('Bob', 'Employee'), ('Alice', 'Manager');

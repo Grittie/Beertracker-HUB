@@ -7,9 +7,9 @@ $query = "
         sessions.SessionID,
         sessions.UserID,
         users.name,
-        sessions.SessionDate,
-        sessions.CheckInTime,
-        sessions.CheckOutTime,
+        DATE_FORMAT(sessions.SessionDate, '%d/%m/%Y') AS SessionDate,
+        DATE_FORMAT(sessions.CheckInTime, '%H:%i') AS CheckInTime,
+        DATE_FORMAT(sessions.CheckOutTime, '%H:%i') AS CheckOutTime,
         sessions.TotalHours,
         sessions.Pitchers
     FROM sessions

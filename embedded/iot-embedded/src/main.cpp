@@ -237,7 +237,7 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     HTTPClient http;
     http.setTimeout(5000);  // Set a 5-second timeout for the request
 
-    http.begin("https://gritla.loca.lt/php/api.php");  // Specify the URL
+    http.begin("http://192.168.50.170/php/api.php");  // Specify the URL
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // Set the POST content type
 
     String postData = "";
