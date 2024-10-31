@@ -26,8 +26,8 @@
 #define BUZZER_PIN 25       // Buzzer Pin
 
 // Button Pins
-#define DECREASE_BUTTON 20  // Button Pin
-#define INCREASE_BUTTON 21  // Button Pin
+#define DECREASE_BUTTON 15  // Button Pin - 
+#define INCREASE_BUTTON 2  // Button Pin +
 
 // Temperature Sensor Pin
 #define TEMP_SENSOR 26       // Analog Pin
@@ -49,12 +49,23 @@ String cardUID = "";
 unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconnection attempt
 const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
 
+// Server IP
+String serverIP = "http://192.168.50.170";
+
+// Menu variables
+volatile int currentMenuOption = 0;  // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
+const char* menuOptions[] = {"Clock In", "Clock Out", "Add Pitcher"};  // Menu options array
+volatile bool menuUpdated = false;  // Flag to indicate menu option changed
+
+
 // Forward declarations of task functions
 void rfidTask(void * pvParameters);
 void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
-void heartbeatTask(void * pvParameters);
+void checkWiFiConnection(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
+void menuTask(void * pvParameters);
+void heartbeatTask(void * pvParameters);
 void addressTask(void * pvParameters);
 
 void setup() {
@@ -79,7 +90,11 @@ void setup() {
   digitalWrite(SCAN_LED, LOW);    
   pinMode(CONNECTION_LED, OUTPUT);       
   digitalWrite(CONNECTION_LED, LOW);          
-  pinMode(BUZZER_PIN, OUTPUT);  
+  pinMode(BUZZER_PIN, OUTPUT);
+
+  // Intialize buttons as inputs
+  pinMode(DECREASE_BUTTON, INPUT_PULLUP);
+  pinMode(INCREASE_BUTTON, INPUT_PULLUP);
 
   // Create a Wi-Fi Manager object
   WiFiManager wifiManager;
@@ -100,16 +115,35 @@ void setup() {
   Serial.println("Connected to Wi-Fi");
   digitalWrite(CONNECTION_LED, HIGH);
 
+  // 3 tone buzzer with high tone beeps
+  tone(BUZZER_PIN, 1000);  // Play tone C4
+  delay(100);              // Delay 100ms
+  noTone(BUZZER_PIN);
+  tone(BUZZER_PIN, 784);  // Play tone G4
+  delay(100);              // Delay 100ms
+  noTone(BUZZER_PIN);
+  tone(BUZZER_PIN, 523);  // Play tone C5
+  delay(100);              // Delay 100ms
+  noTone(BUZZER_PIN);
+
+
   // Initialize the LCD
   lcd.init();
   lcd.backlight();
   lcd.setBacklight(HIGH);
+
+  // Beertracker HUB on LCD
   lcd.setCursor(0, 0);
+  lcd.print("Beertracker HUB");
+  lcd.setCursor(0, 1);
+  lcd.print("Initializing...");
+  
 
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);   // Task for RFID scanning
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
+  xTaskCreate(menuTask, "Menu Task", 10000, NULL, 2, NULL);  // Task for the menu system
   xTaskCreate(heartbeatTask, "Heartbeat Task", 10000, NULL, 4, NULL); // Task for heartbeat
   xTaskCreate(addressTask, "Address Task", 10000, NULL, 5, NULL); // Task for address
 }
@@ -132,8 +166,9 @@ void rfidTask(void * pvParameters) {
       Serial.println("Card detected: " + cardUID);
 
       cardDetected = true;  // Set flag to indicate card is detected for feedback task
+
       // Send the card UID to the API and get the username
-      sendDataToAPI("card", cardUID, "");
+      sendDataToAPI("card", cardUID, String(currentMenuOption));
 
       // Halt the PICC to prevent repeated scans
       mfrc522.PICC_HaltA();
@@ -174,6 +209,64 @@ void feedbackTask(void * pvParameters) {
   }
 }
 
+void menuTask(void *pvParameters) {
+  Serial.println("Menu Task Started");
+
+  // Variable to track the last selection time
+  unsigned long lastSelectionTime = 0;
+  const unsigned long selectionDisplayDuration = 3000; // 3 seconds in milliseconds
+  bool selectionActive = false; // Flag to check if an option is selected
+
+  while (true) {
+    // Check if LEFT button is pressed
+    if (digitalRead(DECREASE_BUTTON) == LOW) {
+      Serial.println("Minus (LEFT) button pressed");
+      currentMenuOption--;
+      if (currentMenuOption < 0) {
+        currentMenuOption = 2;  // Wrap around to the last option (Add Pitcher)
+      }
+      menuUpdated = true;
+      vTaskDelay(150 / portTICK_PERIOD_MS); // Moderate debounce delay
+    }
+
+    // Check if RIGHT button is pressed
+    if (digitalRead(INCREASE_BUTTON) == LOW) {
+      Serial.println("Plus (RIGHT) button pressed");
+      currentMenuOption++;
+      if (currentMenuOption > 2) {
+        currentMenuOption = 0;  // Wrap around to the first option (Clock In)
+      }
+      menuUpdated = true;
+      vTaskDelay(150 / portTICK_PERIOD_MS); // Moderate debounce delay
+    }
+
+    // If menu updated, show the new option on the LCD
+    if (menuUpdated) {
+      tone(BUZZER_PIN, 1000);  // Play a tone to indicate menu change
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Option:");
+      lcd.setCursor(0, 1);
+      lcd.print(menuOptions[currentMenuOption]);
+      vTaskDelay(100);             
+      noTone(BUZZER_PIN);
+      
+      // Mark the selection as active and record the time
+      selectionActive = true;
+      lastSelectionTime = millis();
+      menuUpdated = false;
+    }
+
+    // Check if selection is active and duration has passed
+    if (selectionActive && (millis() - lastSelectionTime >= selectionDisplayDuration)) {
+      lcd.clear(); // Clear the LCD after the duration
+      selectionActive = false; // Reset selection state
+    }
+
+    // Small delay before the next loop iteration
+    vTaskDelay(50 / portTICK_PERIOD_MS); // Keep it responsive
+  }
+}
 
 // Task to continuously read the temperature
 void temperatureTask(void * pvParameters) {

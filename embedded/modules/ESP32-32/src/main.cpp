@@ -50,7 +50,7 @@ unsigned long lastReconnectAttempt = 0;  // Global variable to track last reconn
 const unsigned long reconnectInterval = 10000;  // Interval to try reconnecting (in milliseconds)
 
 // Server IP
-String serverIP = "http://192.168.50.247";
+String serverIP = "http://192.168.50.170";
 
 // Menu variables
 volatile int currentMenuOption = 0;  // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
@@ -65,6 +65,8 @@ void temperatureTask(void * pvParameters);
 void checkWiFiConnection(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
 void menuTask(void * pvParameters);
+void heartbeatTask(void * pvParameters);
+void addressTask(void * pvParameters);
 
 void setup() {
   // Start serial communication
@@ -124,7 +126,8 @@ void setup() {
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
   xTaskCreate(menuTask, "Menu Task", 10000, NULL, 2, NULL);  // Task for the menu system
-  // xTaskCreate(checkWiFiConnection, "WiFi Connection Task", 10000, NULL, 4, NULL); // Task for checking WiFi connection
+  xTaskCreate(heartbeatTask, "Heartbeat Task", 10000, NULL, 4, NULL); // Task for heartbeat
+  xTaskCreate(addressTask, "Address Task", 10000, NULL, 5, NULL); // Task for address
 }
 
 void loop() {
@@ -324,9 +327,14 @@ void sendDataToAPI(String dataType, String data1, String data2) {
       Serial.println("Sending card UID data to API");
       // Send card UID data
       postData = "type=card&uid=" + data1 + "&option=" + data2;
-    } else if (dataType == "connection") {
-      postData = "type=connection&status=" + data1;
+    } else if (dataType == "heartbeat") {
+      Serial.println("Sending ESP32 heartbeat to API");
+      postData = "type=heartbeat&status=" + data1;
+    } else if (dataType == "address") {
+      Serial.println("Sending ESP32 address to API");
+      postData = "type=address&ip=" + data1 + "&mac=" + data2;
     }
+
 
     // Send the POST request
     int httpResponseCode = http.POST(postData);
