@@ -55,6 +55,7 @@ void feedbackTask(void * pvParameters);
 void temperatureTask(void * pvParameters);
 void heartbeatTask(void * pvParameters);
 void sendDataToAPI(String dataType, String data1, String data2);
+void addressTask(void * pvParameters);
 
 void setup() {
   // Start serial communication
@@ -110,6 +111,7 @@ void setup() {
   xTaskCreate(feedbackTask, "Feedback Task", 10000, NULL, 2, NULL); // Task for feedback (LED/Buzzer)
   xTaskCreate(temperatureTask, "Temperature Task", 10000, NULL, 3, NULL); // Task for temperature readings
   xTaskCreate(heartbeatTask, "Heartbeat Task", 10000, NULL, 4, NULL); // Task for heartbeat
+  xTaskCreate(addressTask, "Address Task", 10000, NULL, 5, NULL); // Task for address
 }
 
 void loop() {
@@ -214,6 +216,23 @@ void heartbeatTask(void * pvParameters) {
   }
 }
 
+void addressTask(void * pvParameters) {
+  Serial.println("Address Task Started");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Waiting for WiFi connection...");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);  // 1 second delay
+  }
+
+  Serial.println("Locating address...");
+  String ipAddress = WiFi.localIP().toString();
+  Serial.println("IP Address: " + ipAddress);
+  String macAddress = WiFi.macAddress();
+  Serial.println("MAC Address: " + macAddress);
+
+  sendDataToAPI("address", ipAddress, macAddress);
+  vTaskDelete(NULL);
+}
+
 
 // Function to send data to API
 void sendDataToAPI(String dataType, String data1, String data2) {
@@ -240,6 +259,9 @@ void sendDataToAPI(String dataType, String data1, String data2) {
     } else if (dataType == "heartbeat") {
       Serial.println("Sending ESP32 heartbeat to API");
       postData = "type=heartbeat&status=" + data1;
+    } else if (dataType == "address") {
+      Serial.println("Sending ESP32 address to API");
+      postData = "type=address&ip=" + data1 + "&mac=" + data2;
     }
 
     // Send the POST request

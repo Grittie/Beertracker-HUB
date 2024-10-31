@@ -68,6 +68,14 @@ CREATE TABLE ActivityLog (
     Description VARCHAR(255)
 );
 
+CREATE TABLE DeviceInformation (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ip VARCHAR(45) NOT NULL,
+    mac VARCHAR(17) NOT NULL
+);
+
+
 INSERT INTO Users (Name, Role) 
 VALUES ('Bob', 'Employee'), ('Alice', 'Manager');
 

@@ -19,6 +19,9 @@ window.addEventListener('load', function () {
 
     // Fetch latest check-in data and update the UI
     fetchLatestCheckin();
+
+    // Fetch latest address data and update the UI
+    fetchAddress();
 });
 
 // Global variables for session data
@@ -338,6 +341,23 @@ function fetchLatestCheckin() {
                 document.getElementById('latest-check-in-time').textContent = data.latest_checkin.CheckInTime;
             } else {
                 console.error("Error fetching latest check-in:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function fetchAddress() {
+    fetch('php/get_latest_address.php') // Update the URL to your actual PHP file
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the HTML elements with the latest address information
+                document.getElementById('ip-address').textContent = data.address.ip;
+                document.getElementById('mac-address').textContent = data.address.mac;
+            } else {
+                console.error("Error fetching address:", data.error);
             }
         })
         .catch(error => {
