@@ -16,6 +16,9 @@ window.addEventListener('load', function () {
 
     // Fetch heartbeat status and update the UI
     fetchHeartbeatStatus();
+
+    // Fetch latest check-in data and update the UI
+    fetchLatestCheckin();
 });
 
 // Global variables for session data
@@ -319,5 +322,25 @@ function fetchHeartbeatStatus() {
             const heartbeatStatusDisplay = document.getElementById('heartbeat-status');
             heartbeatStatusDisplay.innerHTML = `Error: ${error}`;
             heartbeatStatusDisplay.className = "failed";
+        });
+}
+
+function fetchLatestCheckin() {
+    fetch('php/get_latest_checkin.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the HTML elements with the latest check-in data
+                document.getElementById('latest-check-in-name').textContent = data.latest_checkin.name;
+                document.getElementById('latest-check-in-role').textContent = data.latest_checkin.role;
+                document.getElementById('latest-check-in-card-id').textContent = data.latest_checkin.card_id;
+                document.getElementById('latest-check-in-date').textContent = data.latest_checkin.SessionDate;
+                document.getElementById('latest-check-in-time').textContent = data.latest_checkin.CheckInTime;
+            } else {
+                console.error("Error fetching latest check-in:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
 }
