@@ -49,6 +49,14 @@
                 <a class="nav-link" id="sessions-tab" data-bs-toggle="tab" href="#sessions" role="tab"
                     aria-controls="sessions" aria-selected="false">Sessions</a>
             </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="account-tab" data-bs-toggle="tab" href="#account" role="tab"
+                    aria-controls="account" aria-selected="false">Account Management</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="leaderboard-tab" data-bs-toggle="tab" href="#leaderboard" role="tab"
+                    aria-controls="leaderboard" aria-selected="false">Leaderboard</a>
+            </li>
         </ul>
 
         <!-- Tab Content -->
@@ -102,7 +110,7 @@
                                 <h5 class="card-title">Current Environment</h5>
                                 <p><strong> Temperature: </strong><span id="temperature-display">--</span> °C</p>
                                 <p><strong> Humidity: </strong><span id="humidity-display">--</span> %</p>
-                                
+
                                 <br>
 
                                 <h5 class="card-title">ESP32 status</h5>
@@ -157,14 +165,132 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Bootstrap Bundle JS for Interactivity -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+            <!-- Account Management Tab -->
+            <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">Account Management</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Manage User Accounts</h5>
+                        <p>Here you can add, remove, or edit user accounts.</p>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addUserModal">Add New User</button>
+                        <!-- Form for editing user accounts -->
+                        <!-- Example table for managing accounts -->
+                        <table class="table table-responsive table-bordered table-hover mt-3">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>RFID_Tag</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="account-management-body">
+                                <!-- User account rows populated dynamically -->
+                            </tbody>
+                        </table>
+                        <!-- Add New User Modal -->
+                        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="addUserForm">
+                                            <div class="mb-3">
+                                                <label for="newUserName" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="newUserName" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="newUserRole" class="form-label">Role</label>
+                                                <input type="text" class="form-control" id="newUserRole" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="newRFID" class="form-label">RFID Tag</label>
+                                                <input type="text" class="form-control" id="newRFID" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Add User</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Edit User Modal -->
+                        <div id="editUserModal" class="modal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit User</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editUserForm">
+                                            <input type="hidden" id="editUserID" name="userID">
+                                            <div class="mb-3">
+                                                <label for="editName" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="editName" name="name"
+                                                    required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editRole" class="form-label">Role</label>
+                                                <input type="text" class="form-control" id="editRole" name="role"
+                                                    required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editRFID" class="form-label">RFID Tag</label>
+                                                <input type="text" class="form-control" id="editRFID" name="rfid_tag"
+                                                    required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div class="tab-pane fade" id="leaderboard" role="tabpanel" aria-labelledby="leaderboard-tab">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">Leaderboard</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Top Users by Pitchers</h5>
+                        <p>This leaderboard ranks users based on their total pitchers across all sessions and the number
+                            of sessions attended.</p>
+                        <table class="table table-responsive table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Total Pitchers</th>
+                                    <th>Sessions Attended</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <!-- Leaderboard rows populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap Bundle JS for Interactivity -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
 </body>
 
 </html>

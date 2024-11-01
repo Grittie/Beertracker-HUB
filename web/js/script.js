@@ -22,6 +22,12 @@ window.addEventListener('load', function () {
 
     // Fetch latest address data and update the UI
     fetchAddress();
+
+    // Fetch leaderboard data and update the UI
+    fetchLeaderboardData();
+
+    // Fetch user data for account management
+    fetchUserData();
 });
 
 // Global variables for session data
@@ -363,4 +369,238 @@ function fetchAddress() {
         .catch(error => {
             console.error('Error:', error);
         });
+}
+
+function fetchLeaderboardData() {
+    fetch('php/get_leaderboard.php')
+        .then(response => response.json())
+        .then(data => {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = ''; // Clear existing leaderboard data
+
+            if (data.success) {
+                data.leaderboard.forEach((user, index) => {
+                    const row = document.createElement('tr');
+
+                    const rankCell = document.createElement('td');
+                    rankCell.textContent = index + 1;
+                    row.appendChild(rankCell);
+
+                    const userIDCell = document.createElement('td');
+                    userIDCell.textContent = user.UserID;
+                    row.appendChild(userIDCell);
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = user.name;
+                    row.appendChild(nameCell);
+
+                    const totalPitchersCell = document.createElement('td');
+                    totalPitchersCell.textContent = user.totalPitchers;
+                    row.appendChild(totalPitchersCell);
+
+                    const sessionsAttendedCell = document.createElement('td');
+                    sessionsAttendedCell.textContent = user.sessionsAttended;
+                    row.appendChild(sessionsAttendedCell);
+
+                    leaderboardBody.appendChild(row);
+                });
+            } else {
+                const errorRow = document.createElement('tr');
+                const errorCell = document.createElement('td');
+                errorCell.colSpan = 5;
+                errorCell.textContent = `Error: ${data.message}`;
+                errorRow.appendChild(errorCell);
+                leaderboardBody.appendChild(errorRow);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const errorRow = document.createElement('tr');
+            const errorCell = document.createElement('td');
+            errorCell.colSpan = 5;
+            errorCell.textContent = `Error: ${error}`;
+            leaderboardBody.appendChild(errorRow);
+        });
+}
+
+// Function to fetch user data and put it in the user table
+function fetchUserData() {
+    fetch('php/get_users.php')
+        .then(response => response.json())
+        .then(data => {
+            const usersTableBody = document.getElementById('account-management-body');
+            usersTableBody.innerHTML = '';
+
+            if (data.success) {
+                data.users.forEach(user => {
+                    const row = document.createElement('tr');
+
+                    const idCell = document.createElement('td');
+                    idCell.textContent = user.UserID;
+                    row.appendChild(idCell);
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = user.name;
+                    row.appendChild(nameCell);
+
+                    const roleCell = document.createElement('td');
+                    roleCell.textContent = user.role;
+                    row.appendChild(roleCell);
+
+                    const cardIdCell = document.createElement('td');
+                    cardIdCell.textContent = user.RFID_Tag;
+                    row.appendChild(cardIdCell);
+
+                    // Create an edit button
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.className = 'btn btn-warning btn-sm';
+                    editButton.onclick = function() {
+                        openEditModal(user);
+                    };
+                    const actionsCell = document.createElement('td');
+                    actionsCell.appendChild(editButton);
+                    row.appendChild(actionsCell);
+
+                    // Create a delete button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'btn btn-danger btn-sm';
+                    deleteButton.onclick = function() {
+                        deleteUser(user.UserID);
+                    };
+                    actionsCell.appendChild(deleteButton);
+
+                    usersTableBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 5; // Update for the number of columns
+                cell.textContent = `Error: ${data.message}`;
+                row.appendChild(cell);
+                usersTableBody.appendChild(row);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 5; // Update for the number of columns
+            cell.textContent = `Error: ${error}`;
+            row.appendChild(cell);
+            document.getElementById('account-management-body').appendChild(row);
+        });
+}
+
+document.getElementById('addUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('newUserName').value;
+    const role = document.getElementById('newUserRole').value;
+    const rfidTag = document.getElementById('newRFID').value;
+
+    fetch('php/add_user.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            name: name,
+            role: role,
+            rfid_tag: rfidTag // Include the RFID Tag in the body
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            fetchUserData(); // Refresh the user data after adding
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            modal.hide(); // Hide the modal
+            document.getElementById('addUserForm').reset(); // Reset the form
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(`Error adding user: ${error}`);
+    });
+});
+
+
+// Function to open the edit modal with user data
+function openEditModal(user) {
+    document.getElementById('editUserID').value = user.UserID;
+    document.getElementById('editName').value = user.name;
+    document.getElementById('editRole').value = user.role;
+    document.getElementById('editRFID').value = user.RFID_Tag; // Populate RFID Tag
+
+    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+    modal.show();
+}
+
+// Event listener for the edit form submission
+document.getElementById('editUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const userID = document.getElementById('editUserID').value;
+    const name = document.getElementById('editName').value;
+    const role = document.getElementById('editRole').value;
+    const rfidTag = document.getElementById('editRFID').value; // Get the RFID Tag value
+
+    fetch('php/edit_user.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            userID: userID,
+            name: name,
+            role: role,
+            rfid_tag: rfidTag // Include the RFID Tag in the body
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            fetchUserData(); // Refresh the user data after editing
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+            modal.hide(); // Hide the modal
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(`Error updating user: ${error}`);
+    });
+});
+
+
+// Function to delete a user
+function deleteUser(userID) {
+    if (confirm("Are you sure you want to delete this user?")) {
+        fetch('php/delete_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                userID: userID
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchUserData(); // Refresh the user data after deletion
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`Error deleting user: ${error}`);
+        });
+    }
 }
