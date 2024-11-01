@@ -8,7 +8,6 @@ $type = $_POST["type"] ?? null;
 if ($type === 'temperature') {
     require_once 'api/temp_handler.php';
 } elseif ($type === 'card') {
-    require_once 'api/card_handler.php';
     require_once 'api/session_handler.php';
 } elseif ($type === 'connection') {
     require_once 'api/connection_handler.php';
