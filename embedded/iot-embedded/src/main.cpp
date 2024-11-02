@@ -466,6 +466,12 @@ void sendDataToAPI(String dataType, String data1, String data2)
             // Keep the text visible for a short period
             delay(2000); // Wait 2 seconds
             lcd.clear();
+
+            // Show Beertracker HUB on LCD and select option
+            lcd.setCursor(0, 0);
+            lcd.print("Beertracker HUB");
+            lcd.setCursor(0, 1);
+            lcd.print("Select option");
           }
           else
           {
@@ -473,27 +479,95 @@ void sendDataToAPI(String dataType, String data1, String data2)
             const char *message = doc["message"];
             Serial.println("Error: " + String(message));
 
-            // Display the appropriate error message on the LCD
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Error:");
-            lcd.setCursor(0, 1);
-            lcd.print(message); // Display the error message
+            // // Display the appropriate error message on the LCD
+            // lcd.clear();
+            // lcd.setCursor(0, 0);
+            // lcd.print("Error:");
+            // lcd.setCursor(0, 1);
+            // lcd.print(message); // Display the error message
 
-            // Keep the text visible for a short period
-            delay(2000); // Wait 2 seconds
-            lcd.clear();
+            // // Keep the text visible for a short period
+            // delay(2000); // Wait 2 seconds
+            // lcd.clear();
 
             if (strcmp(message, "Card not found") == 0)
             {
+              // Say card not found on the LCD
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("Card not found");
+              lcd.setCursor(0, 1);
+              lcd.print("Add card to acc");
+              delay(2000); // Wait 2 seconds
+          
               // Show cardUID on lcd
               lcd.clear();
               lcd.setCursor(0, 0);
               lcd.print("Card UID:");
               lcd.setCursor(0, 1);
               lcd.print(cardUID);
+            }
+
+            if (strcmp(message, "Invalid type or missing data") == 0)
+            {
+              // Show Beertracker HUB on LCD and select option
+              lcd.setCursor(0, 0);
+              lcd.print("Beertracker HUB");
+              lcd.setCursor(0, 1);
+              lcd.print("Select option");
+            }
+
+            if (strcmp(message, "User already checked in") == 0)
+            {
+              // Say user already checked in on the LCD
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("User already");
+              lcd.setCursor(0, 1);
+              lcd.print("checked in");
               delay(2000); // Wait 2 seconds
               lcd.clear();
+
+              // Show Beertracker HUB on LCD and select option
+              lcd.setCursor(0, 0);
+              lcd.print("Beertracker HUB");
+              lcd.setCursor(0, 1);
+              lcd.print("Select option");
+            }
+
+            if (strcmp(message, "User already checked out") == 0)
+            {
+              // Say user already checked out on the LCD
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("User already");
+              lcd.setCursor(0, 1);
+              lcd.print("checked out");
+              delay(2000); // Wait 2 seconds
+              lcd.clear();
+
+              // Show Beertracker HUB on LCD and select option
+              lcd.setCursor(0, 0);
+              lcd.print("Beertracker HUB");
+              lcd.setCursor(0, 1);
+              lcd.print("Select option");
+            }
+
+            if (strcmp(message, "User already checked out, cannot add pitcher") == 0) {
+              // Say user already checked out on the LCD
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("No pitcher");
+              lcd.setCursor(0, 1);
+              lcd.print("User checkd out");
+              delay(2000); // Wait 2 seconds
+              lcd.clear();
+
+              // Show Beertracker HUB on LCD and select option
+              lcd.setCursor(0, 0);
+              lcd.print("Beertracker HUB");
+              lcd.setCursor(0, 1);
+              lcd.print("Select option");
             }
           }
         }
