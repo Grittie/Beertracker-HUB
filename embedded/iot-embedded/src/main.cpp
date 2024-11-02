@@ -53,6 +53,7 @@ String serverIP = "http://192.168.50.170";
 
 // Menu variables
 volatile int currentMenuOption = 0;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
+volatile int needToSelect = 1;                                        // Flag to indicate if a menu option needs to be selected
 const char *menuOptions[] = {"Clock In", "Clock Out", "Add Pitcher"}; // Menu options array
 volatile bool menuUpdated = false;                                    // Flag to indicate menu option changed
 
@@ -138,6 +139,10 @@ void setup()
   lcd.print("Initializing...");
   delay(1000);
   lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Select option");
+  lcd.setCursor(0, 1);
+  lcd.print("Press buttons");
 
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);               // Task for RFID scanning
@@ -231,6 +236,7 @@ void menuTask(void *pvParameters)
     if (digitalRead(DECREASE_BUTTON) == LOW)
     {
       Serial.println("Minus (LEFT) button pressed");
+      needToSelect = 0;
       currentMenuOption--;
       if (currentMenuOption < 0)
       {
@@ -245,6 +251,7 @@ void menuTask(void *pvParameters)
     {
 
       Serial.println("Plus (RIGHT) button pressed");
+      needToSelect = 0;
       currentMenuOption++;
       if (currentMenuOption > 2)
       {
@@ -275,7 +282,14 @@ void menuTask(void *pvParameters)
     // Check if selection is active and duration has passed
     if (selectionActive && (millis() - lastSelectionTime >= selectionDisplayDuration))
     {
-      lcd.clear();             // Clear the LCD after the duration
+      lcd.clear();
+      vTaskDelay(250);             // Clear the LCD after the duration
+      // Display selected option on the LCD
+      lcd.setCursor(0, 0);
+      lcd.print("Selected:");
+      lcd.setCursor(0, 1);
+      lcd.print(menuOptions[currentMenuOption]);
+      
       selectionActive = false; // Reset selection state
     }
 
@@ -374,7 +388,22 @@ void sendDataToAPI(String dataType, String data1, String data2)
     {
       Serial.println("Sending card UID data to API");
       // Send card UID data
-      postData = "type=card&uid=" + data1 + "&option=" + data2;
+      if (needToSelect == 1)
+      {
+        Serial.println("No option selected");
+        // Show on the LCD that they have to select an option
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("No option selected");
+        lcd.setCursor(0, 1);
+        lcd.print("Press buttons");
+        delay(2000); // Wait 2 seconds
+        lcd.clear();
+      } else {
+        postData = "type=card&uid=" + data1 + "&option=" + data2;
+        // Reset selected option after sending the card data
+        needToSelect = 1;
+      }
     }
     else if (dataType == "connection")
     {
@@ -400,7 +429,7 @@ void sendDataToAPI(String dataType, String data1, String data2)
       Serial.println(httpResponseCode);
 
       // If card data is being sent, handle the response
-      if (dataType == "card")
+      if (dataType == "card" )
       {
         String response = http.getString();
         Serial.println("Response: " + response);

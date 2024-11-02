@@ -455,6 +455,7 @@ function fetchUserData() {
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit';
                     editButton.className = 'btn btn-warning btn-sm';
+                    editButton.style.marginRight = '5px';
                     editButton.onclick = function() {
                         openEditModal(user);
                     };

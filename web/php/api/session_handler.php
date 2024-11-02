@@ -36,22 +36,19 @@ if ($statement->num_rows > 0) {
         $statement->bind_param("is", $userID, $currentDate);
         $statement->execute();
         $statement->store_result();
-
+    
         if ($statement->num_rows > 0) {
             $statement->bind_result($sessionID, $checkOutTime);
             $statement->fetch();
             $statement->close();
-
+    
             if ($checkOutTime === null) {
+                // User already checked in
                 echo json_encode(array("status" => "error", "message" => "User already checked in"));
             } else {
-                // User checked out previously, create a new session
+                // User has checked out, create a new session
                 $checkInTime = date('H:i:s'); // Get the current time
-                $statement = $dbConnection->prepare("UPDATE Sessions SET CheckInTime = ? WHERE SessionID = ?");
-                $statement->bind_param("si", $checkInTime, $sessionID);
-                $statement->execute();
-
-                echo json_encode(array("status" => "success", "action" => "checked_in", "message" => "User checked in", "name" => getUserName($dbConnection, $userID)));
+                echo json_encode(array("status" => "error", "message" => "User already checked out"));
             }
         } else {
             // No session exists, create a new one and check the user in
@@ -59,7 +56,7 @@ if ($statement->num_rows > 0) {
             $statement = $dbConnection->prepare("INSERT INTO Sessions (UserID, SessionDate, CheckInTime) VALUES (?, ?, ?)");
             $statement->bind_param("iss", $userID, $currentDate, $checkInTime);
             $statement->execute();
-
+    
             echo json_encode(array("status" => "success", "action" => "checked_in", "message" => "User checked in", "name" => getUserName($dbConnection, $userID)));
         }
     } elseif ($option == "1") {

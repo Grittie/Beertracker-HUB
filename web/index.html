@@ -65,24 +65,34 @@
             <!-- Dashboard Tab -->
             <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                 <div class="row g-4">
-                    <!-- User Information Card -->
+                    <!-- Session stats to display cumulative data, such as total sessions, longest session, and average session length. Person that has been in the most sessions -->
                     <div class="col-lg-6">
                         <div class="card border-warning shadow-sm"> <!-- Yellow card -->
-                            <div class="card-header bg-warning text-dark">Users</div>
+                            <div class="card-header bg-warning text-dark">Session Stats</div>
                             <div class="card-body">
-                                <h5 class="card-title">Registered Users</h5>
-                                <table class="table table-responsive table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Session ID</th>
-                                            <th>User ID</th>
-                                            <th>Name</th>
-                                            <th>Card UID</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="users">
-                                    </tbody>
-                                </table>
+                                <h5 class="card-title">Cumulative Data</h5>
+                                <p><strong>Total Sessions:</strong> <span id="total-sessions">--</span></p>
+                                <p><strong>Total Hours:</strong> <span id="total-hours">--</span></p>
+                                <p><strong>Longest Session:</strong> <span id="longest-session">--</span> hours</p>
+                                <p><strong>Average Session Length:</strong> <span id="average-session">--</span> hours</p>
+                                <p><strong>Most Frequent User:</strong> <span id="most-frequent-user">--</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Pitcher activity to show how many pitchers in total have been ordered and the money spent pitcher * 14, who has gotten the most pitchers, who has gotten the least pitchers and who has should get a pitcher rn pitchers ordered / sessions they are in -->
+                    <div class="col-lg-6">
+                        <div class="card border-warning shadow-sm"> <!-- Yellow card -->
+                            <div class="card-header bg-warning text-dark">Pitcher Activity</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Pitcher Data</h5>
+                                <p><strong>Total Pitchers:</strong> <span id="total-pitchers">--</span></p>
+                                <p><strong>Total Money Spent:</strong> $<span id="total-money-spent">--</span></p>
+                                <p><strong>Pitcher per Session:</strong> <span id="pitcher-per-session">--</span></p>
+                                <p><strong>Most Pitchers:</strong> <span id="most-pitchers">--</span></p>
+                                <p><strong>Least Pitchers:</strong> <span id="least-pitchers">--</span></p>
+                                <p><strong>Next Pitcher:</strong> <span id="next-pitcher">--</span></p>
                             </div>
                         </div>
                     </div>
@@ -127,6 +137,16 @@
                             <div class="card-header bg-warning text-dark">Temperature & Humidity (Last Hour)</div>
                             <div class="card-body">
                                 <canvas id="temperatureHumidityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pitcher Consumption Chart Card -->
+                    <div class="col-lg-6">
+                        <div class="card border-warning"> <!-- Light card -->
+                            <div class="card-header bg-warning text-dark">Pitcher consumption per user</div>
+                            <div class="card-body">
+                                <canvas id="pitcherConsumptionChart"></canvas>
                             </div>
                         </div>
                     </div>
