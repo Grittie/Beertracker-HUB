@@ -7,6 +7,14 @@
     color: red;
 }
 
+#heartbeat-status.success {
+    color: green;
+}
+
+#heartbeat-status.failed {
+    color: red;
+}
+
 .session-date {
     background-color: #f8f9fa; /* Light background for the date row */
     font-weight: bold; /* Make the date text bold */
