@@ -52,10 +52,11 @@ const unsigned long reconnectInterval = 10000; // Interval to try reconnecting (
 String serverIP = "http://192.168.50.170";
 
 // Menu variables
-volatile int currentMenuOption = 0;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
+volatile int currentMenuOption = -1;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
 volatile int needToSelect = 1;                                        // Flag to indicate if a menu option needs to be selected
 const char *menuOptions[] = {"Clock In", "Clock Out", "Add Pitcher"}; // Menu options array
 volatile bool menuUpdated = false;                                    // Flag to indicate menu option changed
+volatile bool readyToScan = false;
 
 // Forward declarations of task functions
 void rfidTask(void *pvParameters);
@@ -164,7 +165,7 @@ void rfidTask(void *pvParameters)
   while (true)
   {
     // Check if a new card is present
-    if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial())
+    if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial() && readyToScan)
     {
       // Store the card UID
       cardUID = "";
@@ -180,6 +181,9 @@ void rfidTask(void *pvParameters)
       // Send the card UID to the API and get the username
       sendDataToAPI("card", cardUID, String(currentMenuOption));
 
+      // Reset the flag to prevent repeated scans
+      readyToScan = false;
+      
       // Halt the PICC to prevent repeated scans
       mfrc522.PICC_HaltA();
     }
@@ -289,7 +293,7 @@ void menuTask(void *pvParameters)
       lcd.print("Selected:");
       lcd.setCursor(0, 1);
       lcd.print(menuOptions[currentMenuOption]);
-      
+      readyToScan = true; // Set flag to indicate ready to scan
       selectionActive = false; // Reset selection state
     }
 
