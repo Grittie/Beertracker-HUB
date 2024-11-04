@@ -37,7 +37,7 @@ let latestDate = ''; // To store the latest date for default selection
 // Function to fetch the connection status and update the UI
 function fetchConnectionStatus() {
     // Fetch the connection status from the server
-    fetch('php/get_connection_status.php')
+    fetch('api/connection')
         .then(response => response.json())
         .then(data => {
             const connectionStatus = document.getElementById('database-connection');
@@ -57,58 +57,8 @@ function fetchConnectionStatus() {
         });
 }
 
-// Function to fetch user data and put it in the user table
-function fetchUserData() {
-    fetch('php/get_time_registration.php')
-        .then(response => response.json())
-        .then(data => {
-            const usersTableBody = document.getElementById('users');
-            usersTableBody.innerHTML = '';
-
-            if (data.success) {
-                data.users.forEach(user => {
-                    const row = document.createElement('tr');
-
-                    const idCell = document.createElement('td');
-                    idCell.textContent = user.UserID;
-                    row.appendChild(idCell);
-
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = user.name;
-                    row.appendChild(nameCell);
-
-                    const roleCell = document.createElement('td');
-                    roleCell.textContent = user.role;
-                    row.appendChild(roleCell);
-
-                    const cardIdCell = document.createElement('td');
-                    cardIdCell.textContent = user.RFID_Tag;
-                    row.appendChild(cardIdCell);
-
-                    usersTableBody.appendChild(row);
-                });
-            } else {
-                const row = document.createElement('tr');
-                const cell = document.createElement('td');
-                cell.colSpan = 4;
-                cell.textContent = `Error: ${data.error}`;
-                row.appendChild(cell);
-                usersTableBody.appendChild(row);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            const row = document.createElement('tr');
-            const cell = document.createElement('td');
-            cell.colSpan = 4;
-            cell.textContent = `Error: ${error}`;
-            row.appendChild(cell);
-            document.getElementById('users').appendChild(row);
-        });
-}
-
 function fetchTemperatureData() {
-    fetch('php/get_latest_temp.php')
+    fetch('api/latest_temperature')
         .then(response => response.json())
         .then(data => {
             const temperatureDisplay = document.getElementById('temperature-display');
@@ -128,7 +78,7 @@ function fetchTemperatureData() {
 }
 
 function fetchSessionData() {
-    fetch('php/get_session.php')
+    fetch('api/session')
         .then(response => response.json())
         .then(data => {
             const sessionsContainer = document.getElementById('sessions-body'); // Update to the new tbody ID
@@ -251,7 +201,7 @@ function filterSessions() {
 
 // New function to fetch historical temperature and humidity data
 function fetchTemperatureHumidityData() {
-    fetch('php/get_temperature_humidity.php')
+    fetch('api/temperature_humidity')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -313,7 +263,7 @@ function createTemperatureHumidityChart(timestamps, temperatures, humidities) {
 }
 
 function fetchHeartbeatStatus() {
-    fetch('php/get_heartbeat.php')
+    fetch('api/heartbeat')
         .then(response => response.json())
         .then(data => {
             const heartbeatStatusDisplay = document.getElementById('heartbeat-status'); // Ensure this element exists in your HTML
@@ -335,7 +285,7 @@ function fetchHeartbeatStatus() {
 }
 
 function fetchLatestCheckin() {
-    fetch('php/get_latest_checkin.php')
+    fetch('api/latest_checkin')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -355,7 +305,7 @@ function fetchLatestCheckin() {
 }
 
 function fetchAddress() {
-    fetch('php/get_latest_address.php') // Update the URL to your actual PHP file
+    fetch('api/address') // Update the URL to your actual PHP file
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -372,7 +322,7 @@ function fetchAddress() {
 }
 
 function fetchLeaderboardData() {
-    fetch('php/get_leaderboard.php')
+    fetch('api/leaderboard')
         .then(response => response.json())
         .then(data => {
             const leaderboardBody = document.getElementById('leaderboard-body');
@@ -425,7 +375,7 @@ function fetchLeaderboardData() {
 
 // Function to fetch user data and put it in the user table
 function fetchUserData() {
-    fetch('php/get_users.php')
+    fetch('api/users')
         .then(response => response.json())
         .then(data => {
             const usersTableBody = document.getElementById('account-management-body');
@@ -501,7 +451,7 @@ document.getElementById('addUserForm').addEventListener('submit', function(event
     const role = document.getElementById('newUserRole').value;
     const rfidTag = document.getElementById('newRFID').value;
 
-    fetch('php/add_user.php', {
+    fetch('api/add_user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -550,7 +500,7 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
     const role = document.getElementById('editRole').value;
     const rfidTag = document.getElementById('editRFID').value; // Get the RFID Tag value
 
-    fetch('php/edit_user.php', {
+    fetch('api/edit_user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -582,7 +532,7 @@ document.getElementById('editUserForm').addEventListener('submit', function(even
 // Function to delete a user
 function deleteUser(userID) {
     if (confirm("Are you sure you want to delete this user?")) {
-        fetch('php/delete_user.php', {
+        fetch('api/delete_user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

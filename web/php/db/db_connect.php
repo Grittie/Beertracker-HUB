@@ -7,7 +7,7 @@ use Dotenv\Dotenv;
 date_default_timezone_set('Europe/Amsterdam');
 
 // Get the directory path
-$directoryPath = __DIR__ . '/../../';
+$directoryPath = __DIR__ . '/../../../';
 
 // Load the .env file
 $dotenv = Dotenv::createImmutable($directoryPath);

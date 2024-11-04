@@ -49,7 +49,7 @@ unsigned long lastReconnectAttempt = 0;        // Global variable to track last 
 const unsigned long reconnectInterval = 10000; // Interval to try reconnecting (in milliseconds)
 
 // Server IP
-String serverIP = "http://192.168.50.170";
+String serverIP = "http://145.92.189.155";
 
 // Menu variables
 volatile int currentMenuOption = -1;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
@@ -376,7 +376,7 @@ void sendDataToAPI(String dataType, String data1, String data2)
     HTTPClient http;
     http.setTimeout(5000); // Set a 5-second timeout for the request
 
-    http.begin(serverIP + "/php/api.php");                               // Specify the URL of the API endpoint
+    http.begin(serverIP + "/api/" + dataType);                               // Specify the URL of the API endpoint
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
 
     String postData = "";
@@ -386,7 +386,7 @@ void sendDataToAPI(String dataType, String data1, String data2)
     {
       Serial.println("Sending temperature and humidity data to API");
       // Send temperature and humidity data
-      postData = "type=temperature&temperature=" + data1 + "&humidity=" + data2;
+      postData = "temperature=" + data1 + "&humidity=" + data2;
     }
     else if (dataType == "card")
     {
@@ -404,24 +404,24 @@ void sendDataToAPI(String dataType, String data1, String data2)
         delay(2000); // Wait 2 seconds
         lcd.clear();
       } else {
-        postData = "type=card&uid=" + data1 + "&option=" + data2;
+        postData = "uid=" + data1 + "&option=" + data2;
         // Reset selected option after sending the card data
         needToSelect = 1;
       }
     }
     else if (dataType == "connection")
     {
-      postData = "type=connection&status=" + data1;
+      postData = "status=" + data1;
     }
     else if (dataType == "heartbeat")
     {
       Serial.println("Sending ESP32 heartbeat to API");
-      postData = "type=heartbeat&status=" + data1;
+      postData = "status=" + data1;
     }
     else if (dataType == "address")
     {
       Serial.println("Sending ESP32 address to API");
-      postData = "type=address&ip=" + data1 + "&mac=" + data2;
+      postData = "ip=" + data1 + "&mac=" + data2;
     }
 
     // Send the POST request
@@ -483,17 +483,6 @@ void sendDataToAPI(String dataType, String data1, String data2)
             const char *message = doc["message"];
             Serial.println("Error: " + String(message));
 
-            // // Display the appropriate error message on the LCD
-            // lcd.clear();
-            // lcd.setCursor(0, 0);
-            // lcd.print("Error:");
-            // lcd.setCursor(0, 1);
-            // lcd.print(message); // Display the error message
-
-            // // Keep the text visible for a short period
-            // delay(2000); // Wait 2 seconds
-            // lcd.clear();
-
             if (strcmp(message, "Card not found") == 0)
             {
               // Say card not found on the LCD
@@ -514,6 +503,24 @@ void sendDataToAPI(String dataType, String data1, String data2)
 
             if (strcmp(message, "Invalid type or missing data") == 0)
             {
+              // Show Beertracker HUB on LCD and select option
+              lcd.setCursor(0, 0);
+              lcd.print("Beertracker HUB");
+              lcd.setCursor(0, 1);
+              lcd.print("Select option");
+            }
+
+            if (strcmp(message, "User not checked in") == 0)
+            {
+              // Say user not checked in on the LCD
+              lcd.clear();
+              lcd.setCursor(0, 0);
+              lcd.print("User not");
+              lcd.setCursor(0, 1);
+              lcd.print("checked in");
+              delay(2000); // Wait 2 seconds
+              lcd.clear();
+
               // Show Beertracker HUB on LCD and select option
               lcd.setCursor(0, 0);
               lcd.print("Beertracker HUB");
@@ -606,10 +613,15 @@ void sendDataToAPI(String dataType, String data1, String data2)
   else
   {
     Serial.println("Error: WiFi not connected");
+    // Turn off the LED
+    digitalWrite(CONNECTION_LED, LOW);
+
     // Display WiFi error on the LCD
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("WiFi Error");
+    lcd.setCursor(0, 1);
+    lcd.print("Not connected");
     delay(2000); // Wait 2 seconds
     lcd.clear();
   }
