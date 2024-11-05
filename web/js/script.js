@@ -56,6 +56,16 @@ window.addEventListener('load', function () {
 let sessionsByDate = {}; // Global variable to hold sessions grouped by date
 let latestDate = ''; // To store the latest date for default selection
 
+// Global variable for selected date
+let selectedDate = null; // Variable to hold the selected date
+
+// Global variables for charts
+let temperatureHumidityChart; // Declare variable to hold chart instance
+let pitcherConsumptionChart; // Declare variable to hold chart instance
+
+// Global variable for ESP32 IP address
+let esp32IpAddress = ''; // Variable to hold the ESP32 IP address
+
 // Function to fetch the connection status and update the UI
 function fetchConnectionStatus() {
     // Fetch the connection status from the server
@@ -98,8 +108,6 @@ function fetchTemperatureData() {
             console.error('Error:', error);
         });
 }
-
-let selectedDate = null; // Variable to hold the selected date
 
 function fetchSessionData() {
     // Save the current selected date before fetching new data
@@ -247,7 +255,6 @@ function filterSessions() {
     renderSessions(selectedDate);
 }
 
-let temperatureHumidityChart; // Declare variable to hold chart instance
 
 // New function to fetch historical temperature and humidity data
 function fetchTemperatureHumidityData() {
@@ -371,6 +378,9 @@ function fetchAddress() {
                 // Update the HTML elements with the latest address information
                 document.getElementById('ip-address').textContent = data.address.ip;
                 document.getElementById('mac-address').textContent = data.address.mac;
+
+                // Store the IP address in the global variable
+                esp32IpAddress = data.address.ip;
             } else {
                 console.error("Error fetching address:", data.error);
             }
@@ -670,9 +680,6 @@ function fetchPitcherStatistics() {
         });
 }
 
-
-let pitcherConsumptionChart; // Declare variable to hold chart instance
-
 function fetchPitcherConsumptionData() {
     fetch('api/pitcher_consumption')
         .then(response => response.json())
@@ -748,3 +755,23 @@ function updatePitcherConsumptionChart(labels, consumption, sessions) {
         pitcherConsumptionChart.update(); // Call update to redraw the chart
     }
 }
+
+// Function to create the temperature and humidity chart
+document.getElementById('reset-btn').addEventListener('click', function() {
+    if (esp32IpAddress) {
+        fetch(`http://${esp32IpAddress}/reset`, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    alert("ESP32 is resetting...");
+                } else {
+                    alert("Failed to send reset command.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to connect to ESP32.");
+            });
+    } else {
+        alert("ESP32 IP address is not available.");
+    }
+});

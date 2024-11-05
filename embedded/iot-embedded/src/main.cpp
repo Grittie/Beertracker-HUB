@@ -8,6 +8,7 @@
 #include <Adafruit_Sensor.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <ESPAsyncWebServer.h>
 
 // Pin definitions
 // SPI Pins
@@ -38,6 +39,9 @@ DHT dht(TEMP_SENSOR, DHTTYPE);    // Create DHT instance
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+// Create an instance of the server
+AsyncWebServer server(80);
+
 // Flag to signal when card is detected
 volatile bool cardDetected = false;
 
@@ -49,7 +53,7 @@ unsigned long lastReconnectAttempt = 0;        // Global variable to track last 
 const unsigned long reconnectInterval = 10000; // Interval to try reconnecting (in milliseconds)
 
 // Server IP
-String serverIP = "http://192.168.50.247";
+String serverIP = "http://192.168.50.170";
 
 // Menu variables
 volatile int currentMenuOption = -1;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
@@ -67,6 +71,7 @@ void sendDataToAPI(String dataType, String data1, String data2);
 void menuTask(void *pvParameters);
 void heartbeatTask(void *pvParameters);
 void addressTask(void *pvParameters);
+void httpServerTask(void *pvParameters);
 
 void setup()
 {
@@ -152,6 +157,7 @@ void setup()
   xTaskCreate(menuTask, "Menu Task", 10000, NULL, 2, NULL);               // Task for the menu system
   xTaskCreate(heartbeatTask, "Heartbeat Task", 10000, NULL, 4, NULL);     // Task for heartbeat
   xTaskCreate(addressTask, "Address Task", 10000, NULL, 5, NULL);         // Task for address
+  xTaskCreate(httpServerTask, "HTTP Server Task", 10000, NULL, 5, NULL);  // Task for HTTP server
 }
 
 void loop()
@@ -231,8 +237,8 @@ void menuTask(void *pvParameters)
 
   // Variable to track the last selection time
   unsigned long lastSelectionTime = 0;
-  const unsigned long selectionDisplayDuration = 3000; // 3 seconds in milliseconds
-  bool selectionActive = false;                        // Flag to check if an option is selected
+  const unsigned long selectionDisplayDuration = 1000;
+  bool selectionActive = false;                       
 
   while (true)
   {
@@ -366,6 +372,20 @@ void addressTask(void *pvParameters)
 
   sendDataToAPI("address", ipAddress, macAddress);
   vTaskDelete(NULL);
+}
+
+// Function to reset the esp32
+void httpServerTask(void *pvParameters) {
+    server.on("/reset", HTTP_POST, [](AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", "ESP32 is resetting...");
+        ESP.restart();
+    });
+
+    server.begin();
+
+    while (true) {
+        delay(1000);
+    }
 }
 
 // Function to send data to API
