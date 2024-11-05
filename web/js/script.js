@@ -127,23 +127,40 @@ function fetchSessionData() {
                 });
 
                 // Populate the date dropdown
-                Object.keys(sessionsByDate).forEach(date => {
-                    const option = document.createElement('option');
-                    option.value = date;
-                    option.textContent = date;
-                    dateFilter.appendChild(option);
-                });
+Object.keys(sessionsByDate).forEach(date => {
+    const option = document.createElement('option');
+    option.value = date;
+    option.textContent = date;
+    dateFilter.appendChild(option);
+});
 
-                // Set the latest date as default if no previous selection exists
-                if (!selectedDate || !sessionsByDate[selectedDate]) {
-                    selectedDate = Object.keys(sessionsByDate).sort().reverse()[0]; // Get the latest date
-                }
+// Function to convert date from DD/MM/YYYY to a Date object
+function parseDate(dateStr) {
+    const parts = dateStr.split('/');
+    return new Date(parts[2], parts[1] - 1, parts[0]); // Year, Month (0-indexed), Day
+}
 
-                // Set the selected date back to the dropdown
-                dateFilter.value = selectedDate;
+// Set the latest date as default if no previous selection exists
+if (!selectedDate || !sessionsByDate[selectedDate]) {
+    // Create an array of dates from the sessionsByDate keys, parsed as Date objects
+    const datesArray = Object.keys(sessionsByDate).map(dateStr => ({
+        original: dateStr,
+        date: parseDate(dateStr)
+    }));
 
-                // Render sessions for the selected date
-                renderSessions(selectedDate);
+    // Sort the array based on the Date objects in descending order
+    datesArray.sort((a, b) => b.date - a.date); // Sort descending
+
+    // Get the latest date in the original format
+    selectedDate = datesArray[0].original;
+}
+
+// Set the selected date back to the dropdown
+dateFilter.value = selectedDate;
+
+// Render sessions for the selected date
+renderSessions(selectedDate);
+
             } else {
                 const errorRow = document.createElement('tr');
                 const errorCell = document.createElement('td');
@@ -663,9 +680,10 @@ function fetchPitcherConsumptionData() {
             if (data.success) {
                 const labels = data.pitcher_consumption.map(entry => entry.name);
                 const consumption = data.pitcher_consumption.map(entry => parseInt(entry.total_pitchers, 10));
+                const sessions = data.pitcher_consumption.map(entry => parseInt(entry.total_sessions, 10));
                 
                 // Update the chart with new data
-                updatePitcherConsumptionChart(labels, consumption);
+                updatePitcherConsumptionChart(labels, consumption, sessions);
             } else {
                 console.error("Error fetching pitcher consumption data:", data.message);
             }
@@ -676,7 +694,7 @@ function fetchPitcherConsumptionData() {
 }
 
 // Create the chart if it doesn't exist, or update it if it does
-function updatePitcherConsumptionChart(labels, consumption) {
+function updatePitcherConsumptionChart(labels, consumption, sessions) {
     if (!pitcherConsumptionChart) {
         // Create the chart if it doesn't exist
         const ctx = document.getElementById('pitcherConsumptionChart').getContext('2d');
@@ -689,6 +707,13 @@ function updatePitcherConsumptionChart(labels, consumption) {
                     data: consumption,
                     backgroundColor: 'rgba(255, 206, 86, 0.2)',
                     borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Total Sessions',
+                    data: sessions,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
             },
@@ -705,7 +730,7 @@ function updatePitcherConsumptionChart(labels, consumption) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Total Pitchers'
+                            text: 'Count'
                         },
                         ticks: {
                             stepSize: 1,
@@ -719,6 +744,7 @@ function updatePitcherConsumptionChart(labels, consumption) {
         // Update the chart data if it already exists
         pitcherConsumptionChart.data.labels = labels;
         pitcherConsumptionChart.data.datasets[0].data = consumption;
+        pitcherConsumptionChart.data.datasets[1].data = sessions;
         pitcherConsumptionChart.update(); // Call update to redraw the chart
     }
 }

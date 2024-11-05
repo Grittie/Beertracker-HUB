@@ -346,8 +346,9 @@ class GettersHandler
     {
         $query = "
             SELECT 
-                users.name,
-                SUM(s.Pitchers) AS total_pitchers
+            users.name,
+            SUM(s.Pitchers) AS total_pitchers,
+            COUNT(s.SessionID) AS total_sessions
             FROM users
             LEFT JOIN sessions s ON users.UserID = s.UserID
             GROUP BY users.UserID, users.name
