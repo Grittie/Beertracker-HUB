@@ -285,5 +285,85 @@ class GettersHandler
 
         $statement->close();
     }
+
+    // GET request to fetch cumulative session data with total amount of sessions, total hour of sessions, longest session, average session length, and most frequently user in sessions
+    public function handleCumulativeStatistics()
+    {
+        $query = "
+            SELECT 
+                COUNT(SessionID) AS total_sessions,
+                SUM(TotalHours) AS total_hours,
+                MAX(TotalHours) AS longest_session,
+                AVG(TotalHours) AS average_session,
+                (SELECT name FROM users WHERE UserID = (
+                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY COUNT(UserID) DESC LIMIT 1
+                )) AS most_frequent_user
+            FROM sessions";
+
+        $result = $this->dbConnection->query($query);
+
+        if ($result->num_rows > 0) {
+            $cumulativeData = $result->fetch_assoc();
+            echo json_encode(array("success" => true, "cumulative_data" => $cumulativeData));
+        } else {
+            echo json_encode(array("success" => false, "error" => "No cumulative session data found"));
+        }
+    }
+
+    // Fetch pitcher statistics with total amount of pitchers ordered, total money spent (pitchers * 14), average pitchers per session (SessionDate, Pitchers), most pitchers in one session (SessionDate, Pitchers), person who has the most pitchers, person with the least pitchers, person with the least pitchers but the most sessions
+    public function handlePitcherStatistics()
+    {
+        $query = "
+            SELECT 
+                SUM(Pitchers) AS total_pitchers,
+                SUM(Pitchers) * 14 AS total_money_spent,
+                AVG(Pitchers) AS pitchers_per_session,
+                (SELECT SessionDate FROM sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_session_date,
+                (SELECT Pitchers FROM sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_in_session,
+                (SELECT name FROM users WHERE UserID = (
+                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY SUM(Pitchers) DESC LIMIT 1
+                )) AS most_pitchers,
+                (SELECT name FROM users WHERE UserID = (
+                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY SUM(Pitchers) ASC LIMIT 1
+                )) AS least_pitchers,
+                (SELECT name FROM users WHERE UserID = (
+                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY COUNT(UserID) ASC LIMIT 1
+                )) AS least_pitchers_most_sessions
+            FROM sessions";
+
+        $result = $this->dbConnection->query($query);
+
+        if ($result->num_rows > 0) {
+            $pitcherData = $result->fetch_assoc();
+            echo json_encode(array("success" => true, "pitcher_data" => $pitcherData));
+        } else {
+            echo json_encode(array("success" => false, "error" => "No pitcher statistics found"));
+        }
+    }
+
+    // Fetch pitcher consumption data for users and how many pitchers they have consumed
+    public function handlePitcherConsumption()
+    {
+        $query = "
+            SELECT 
+                users.name,
+                SUM(s.Pitchers) AS total_pitchers
+            FROM users
+            LEFT JOIN sessions s ON users.UserID = s.UserID
+            GROUP BY users.UserID, users.name
+            ORDER BY total_pitchers DESC";
+
+        $result = $this->dbConnection->query($query);
+
+        if ($result->num_rows > 0) {
+            $pitcherConsumption = array();
+            while ($row = $result->fetch_assoc()) {
+                $pitcherConsumption[] = $row;
+            }
+            echo json_encode(array("success" => true, "pitcher_consumption" => $pitcherConsumption));
+        } else {
+            echo json_encode(array("success" => false, "error" => "No pitcher consumption data found"));
+        }
+    }
 }
 ?>

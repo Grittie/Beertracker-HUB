@@ -16,7 +16,7 @@ switch ($requestMethod) {
     case 'POST':
         switch ($type) {
             case 'card':
-                $EmbeddedHandler->handleCard(); // Make sure this is the correct method name
+                $EmbeddedHandler->handleSession(); // Make sure this is the correct method name
                 break;
             case 'address':
                 $EmbeddedHandler->handleDeviceAddress();
@@ -81,6 +81,15 @@ switch ($requestMethod) {
                 break;
             case 'users':
                 $gettersHandler->handleUsers();
+                break;
+            case 'cumulative_statistics':
+                $gettersHandler->handleCumulativeStatistics();
+                break;
+            case 'pitcher_statistics':
+                $gettersHandler->handlePitcherStatistics();
+                break;
+            case 'pitcher_consumption':
+                $gettersHandler->handlePitcherConsumption();
                 break;
             default:
                 echo json_encode(["status" => "error", "message" => "Invalid endpoint"]);
