@@ -4,29 +4,6 @@
 
 The **System Architecture Diagram** provides an abstraction of the entire clock-in/clock-out system. It shows the interaction between the embedded system (ESP32-S3), frontend, backend, database, and the networking components. This diagram is essential to understand how the hardware and software components are connected, enabling smooth communication and efficient logging of user check-ins/outs and sensor data (e.g., temperature and humidity). This architecture also ensures the system is scalable and maintainable for future expansions.
 
-### **Legenda**
-
-The symbols used in the system architecture diagram are:
-
-- **Solid Rectangle**: Represents hardware components like the ESP32, sensors, and RFID readers.
-- **Dashed Rectangle**: Represents software components, including the PHP API, frontend files, and Docker components.
-- **Rounded Rectangle**: Represents virtualized components, such as Docker containers or network components.
-- **Cylinder**: Represents databases or data storage elements.
-- **Arrow**: Indicates communication protocols between the components, with labels specifying the protocol and TCP/IP port when applicable.
-
-#### **Legend of Symbols**
-- **Hardware Components**: Rectangles with solid borders.
-- **Software Components**: Rectangles with dashed borders.
-- **Data Storage**: Cylindrical shapes (for databases).
-- **Virtual Components**: Rounded rectangles (for Docker containers, virtual environments).
-- **Communication Protocols**: Arrows with labels like HTTP, MySQL, or I2C, indicating direction of data flow.
-
-### **System Architecture Diagram**
-
-_**[Insert your system architecture diagram here]**_
-
----
-
 ### **Component Breakdown and Functionality**
 
 #### **Embedded System (Subsystem)**
@@ -45,7 +22,7 @@ _**[Insert your system architecture diagram here]**_
 
 - **NGINX Web Server**: Acts as a reverse proxy, directing traffic to the backend PHP services that handle API requests.
   
-  - **PHP Module** (Software Component): Responsible for processing HTTP requests, interacting with the database, and managing user sessions.
+- **PHP Module** (Software Component): Responsible for processing HTTP requests, interacting with the database, and managing user sessions.
 
 #### **Frontend (Subsystem)**
 

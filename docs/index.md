@@ -101,4 +101,7 @@ Throughout the duration of the project, I will be working on various aspects in 
 
 --- 
 
+## Use of AI
+The use of AI has been used writing this project to improve readability with better grammar 
+
 {{ mdocotion_header('https://cdn.prod.website-files.com/65730eadde5e46a394ae1451/65730eadde5e46a394ae14ca_ES%20-%20Image%20home%202.jpg') }}

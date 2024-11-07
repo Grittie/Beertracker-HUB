@@ -317,6 +317,28 @@ Creating the drink pattern turned out to be quite a challenge, largely due to th
 
 ## Performance Review Week 8
 
-<img src="../../assets/images/learningjournal/reviews/IoTw9-Lars.png" alt="performance review" width="500" />
+<img src="../../assets/images/learningjournal/reviews/IoTw10-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+## Week 9
+
+Week 9 begun with
+
+<br>
+
+### Feedback
+
+<br>
+
+## Performance Review Week 9
+
+<img src="../../assets/images/learningjournal/reviews/IoTw10-Lars.png" alt="performance review" width="500" />
+
+<br>
+
+## Week 10
+
+Week 10 begun with
 
 <br>

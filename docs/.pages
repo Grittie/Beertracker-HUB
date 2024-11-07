@@ -15,3 +15,7 @@ nav:
       - Concept & Design: uxd/concept_design
       - Create & Test: uxd/create_test
       - Conclude & Reflect: uxd/conclude_reflect
+    - 📈 Market research:
+      - Research to market: research/research_to_market
+      - Research implementation: research/research_implementation
+
