@@ -1,97 +1,78 @@
 CREATE DATABASE smart_time_registration;
 USE smart_time_registration;
 
-CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Role VARCHAR(100)
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(100)
 );
 
-CREATE TABLE Cards (
-    CardID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL,
-    RFID_Tag VARCHAR(255) UNIQUE NOT NULL,
-    Status VARCHAR(50) DEFAULT 'Active',
-    IssueDate DATE,
-    ExpiryDate DATE,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+CREATE TABLE cards (
+    card_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    rfid_tag VARCHAR(255) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'Active',
+    issue_date DATE,
+    expiry_date DATE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
-CREATE TABLE Sessions (
-    SessionID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL,
-    SessionDate DATE NOT NULL,
-    CheckInTime TIME NOT NULL,
-    CheckOutTime TIME,
-    Pitchers INT DEFAULT 0,
-    TotalHours FLOAT GENERATED ALWAYS AS (TIMESTAMPDIFF(SECOND, CONCAT(SessionDate, ' ', CheckInTime), CONCAT(SessionDate, ' ', CheckOutTime)) / 3600) STORED,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+CREATE TABLE sessions (
+    session_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    session_date DATE NOT NULL,
+    check_in_time TIME NOT NULL,
+    check_out_time TIME,
+    pitchers INT DEFAULT 0,
+    total_hours FLOAT GENERATED ALWAYS AS (
+        TIMESTAMPDIFF(SECOND, CONCAT(session_date, ' ', check_in_time), CONCAT(session_date, ' ', check_out_time)) / 3600
+    ) STORED,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
-CREATE TABLE AttendanceLogs (
-    LogID INT AUTO_INCREMENT PRIMARY KEY,
-    CardID INT NOT NULL,
-    Timestamp DATETIME NOT NULL,
-    EventType ENUM('Clock In', 'Clock Out') NOT NULL,
-    FOREIGN KEY (CardID) REFERENCES Cards(CardID)
+CREATE TABLE attendance_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    card_id INT NOT NULL,
+    timestamp DATETIME NOT NULL,
+    event_type ENUM('Clock In', 'Clock Out') NOT NULL,
+    FOREIGN KEY (card_id) REFERENCES cards(card_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
-CREATE TABLE InternalTemperature (
-    TempLogID INT AUTO_INCREMENT PRIMARY KEY,
-    Timestamp DATETIME NOT NULL,
-    Temperature FLOAT NOT NULL,
-    Humidity FLOAT NOT NULL
+CREATE TABLE internal_temperature (
+    temp_log_id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME NOT NULL,
+    temperature FLOAT NOT NULL,
+    humidity FLOAT NOT NULL
 );
 
-CREATE TABLE ConnectionStatus (
+CREATE TABLE connection_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20)
 );
 
-CREATE TABLE Heartbeats (
-    HeartbeatID INT AUTO_INCREMENT PRIMARY KEY,
-    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Status VARCHAR(20) DEFAULT 'Active'
+CREATE TABLE heartbeats (
+    heartbeat_id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'Active'
 );
 
-CREATE TABLE ActivityLog (
-    ActivityID INT AUTO_INCREMENT PRIMARY KEY,
-    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    ActivityType VARCHAR(50) NOT NULL,
-    Description VARCHAR(255)
+CREATE TABLE activity_log (
+    activity_id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    activity_type VARCHAR(50) NOT NULL,
+    description VARCHAR(255)
 );
 
-CREATE TABLE DeviceInformation (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE device_information (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     ip VARCHAR(45) NOT NULL,
     mac VARCHAR(17) NOT NULL
 );
-
-
-INSERT INTO Users (Name, Role) 
-VALUES ('Bob', 'Employee'), ('Alice', 'Manager');
-
-INSERT INTO Cards (UserID, RFID_Tag, Status, IssueDate, ExpiryDate)
-VALUES 
-(1, '12345ABC', 'Active', '2024-09-08', NULL),
-(2, '67890XYZ', 'Active', '2024-09-08', NULL);
-
-INSERT INTO Sessions (UserID, SessionDate, CheckInTime, CheckOutTime, Pitchers)
-VALUES 
-(1, '2024-09-08', '08:00:00', '17:00:00', 0),
-(2, '2024-09-08', '09:00:00', '18:00:00', 1);
-
-INSERT INTO AttendanceLogs (CardID, Timestamp, EventType)
-VALUES 
-(1, '2024-09-08 08:00:00', 'Clock In'),
-(2, '2024-09-08 09:00:00', 'Clock In'),
-(1, '2024-09-08 17:00:00', 'Clock Out'),
-(2, '2024-09-08 18:00:00', 'Clock Out');

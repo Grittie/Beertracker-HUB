@@ -1,47 +1,58 @@
 # Web Code
 
-### `index.html`
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Time Registration</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js" defer></script>
-</head>
-<body>
-    <p>Database <span id="database-connection"></span> connection.</p>
-    <h1>Smart Time Registration</h1>
-    <h2>Users Table</h2>
-    <table id="users-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Card ID</th>
-            </tr>
-        </thead>
-        <tbody id="users"></tbody>
-    </table>
-</body>
-</html>
+## Introduction
+The BeerTracker HUB project is a modern web-based dashboard built to facilitate the tracking and management of user sessions and beer pitcher consumption. This documentation provides a comprehensive overview of how the project is structured, highlighting the various technologies used and how they adhere to the latest standards in web development. It is aimed at developers who wish to understand the codebase or contribute to future development.
+
+### Repository
+You can access the code repository [here](https://gitlab.fdmci.hva.nl/IoT/2024-2025-semester-1/individual-project/zuuliiyiizoo76/-/tree/main).
+
+## Front-End Overview
+The front-end of BeerTracker HUB is built using HTML, CSS, and JavaScript, following modern web standards to create a responsive and accessible user experience. The front-end is structured into HTML files for the layout, CSS for styling, and JavaScript for interactions.
+
+### HTML
+The main structure of the website is contained in the `index.html` file. The HTML is organized to display various dashboard components like session statistics, pitcher activity, the leaderboard, and account management features.
+
+Key features:
+- Use of Bootstrap for styling and responsiveness.
+- Custom components for different parts of the dashboard, such as sessions, accounts, and the leaderboard.
+- Utilization of HTML in PHP files for including common components like navigation and layout elements.
+
+File: [`index.html`](#)
+
+### CSS
+The styling is managed through a separate CSS file, `style.css`, which helps ensure a clean separation of concerns. The CSS includes:
+- Custom styling for the database connection states, navbar, tables, and various cards used throughout the dashboard.
+- The color scheme primarily uses shades of yellow and gold to maintain brand consistency.
+- Imported Google Fonts to enhance the visual appeal of the text.
+
+File: [`style.css`](#)
+
+```css
+/* Colours for database connection states */
+#database-connection.success {
+    color: green;
+}
+#database-connection.failed {
+    color: red;
+}
 ```
 
-Sets up the HTML structure with a table to display user information and a paragraph to show the database connection status. It links to an external CSS stylesheet and JavaScript file.
+This snippet demonstrates how different states are highlighted visually for better user experience【14†source】.
 
+### JavaScript
+The JavaScript is organized into a separate file, `script.js`, which contains all the logic for interacting with the back-end API. The JavaScript primarily uses the Fetch API to get and send data, ensuring that all data interactions are done asynchronously for better performance.
 
-### `script.js`
+Key features:
+- Functions like `fetchSessionData()`, `fetchTemperatureData()`, and `fetchLeaderboardData()` make API calls to fetch data and update the UI accordingly.
+- The JavaScript code adheres to the convention of defining functions to handle specific tasks and grouping data by date, sessions, and other attributes for easier UI updates.
+- JSON is used as the primary data format for all requests and responses, following REST API best practices.
+
+File: [`script.js`](#)
+
 ```javascript
-window.addEventListener('load', function() {
-    fetchConnectionStatus();
-    fetchUserData();
-});
-
+// Fetch connection status and update the UI
 function fetchConnectionStatus() {
-    fetch('php/connection_status.php')
+    fetch('api/connection')
         .then(response => response.json())
         .then(data => {
             const connectionStatus = document.getElementById('database-connection');
@@ -55,107 +66,51 @@ function fetchConnectionStatus() {
         })
         .catch(error => {
             console.error('Error:', error);
-            const connectionStatus = document.getElementById('database-connection');
             connectionStatus.innerHTML = `failed: ${error}`;
             connectionStatus.className = "failed";
         });
 }
-
-function fetchUserData() {
-    fetch('php/get_time_registration.php')
-        .then(response => response.json())
-        .then(data => {
-            const usersTableBody = document.getElementById('users');
-            usersTableBody.innerHTML = '';
-            if (data.success) {
-                data.users.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td>${user.UserID}</td><td>${user.name}</td><td>${user.role}</td><td>${user.RFID_Tag}</td>`;
-                    usersTableBody.appendChild(row);
-                });
-            } else {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="4">Error: ${data.error}</td>`;
-                usersTableBody.appendChild(row);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="4">Error: ${error}</td>`;
-            document.getElementById('users').appendChild(row);
-        });
-}
 ```
 
-JavaScript functions to fetch and display the database connection status and user data. Updates the HTML elements with the status and user information.
+The above function is responsible for fetching and displaying the connection status to the back-end, updating the UI with the appropriate success or failure message【13†source】.
 
+## Back-End Overview
+The back-end of the BeerTracker HUB project is written in PHP, following an object-oriented programming (OOP) structure. This helps keep the code modular and maintainable.
 
-### `connection_status.php`
-```php
-<?php
-require_once 'db_connect.php';
-echo json_encode(array(
-    "success" => true,
-    "message" => "Connection successful",
-    "host" => $dbHost,
-    "user" => $dbUser,
-    "database" => $dbName,
-    "directoryPath" => $directoryPath
-));
-$dbConnection->close();
-?>
-```
+### API
+The API is designed to handle requests from the front-end, interacting with the database to read, insert, update, or delete data. All routes return JSON-formatted responses to ensure consistency and ease of use on the front-end.
 
-Returns a JSON response with the connection status of the database, including host, user, and database information.
+Key features:
+- Separate handler files for different functionalities (`embedded_handler.php`, `getters.php`, `setters.php`).
+- Each route in the API handles specific tasks, such as user management, session tracking, or temperature data retrieval.
+- Utilization of PHP's OOP features to create modular, reusable components.
 
+### PHP Conventions
+The code follows PHP conventions strictly, ensuring readability and maintainability:
+- **Separation of Concerns**: Different aspects of the application logic are handled by separate files.
+- **Error Handling**: Errors are caught and returned in JSON format to avoid breaking the application with unexpected HTML output.
+- **Object-Oriented Programming**: Classes are used to encapsulate related functionality, making the code more modular.
 
-### `db_connect.php`
-```php
-<?php
-require_once '/var/www/html/vendor/autoload.php';
-use Dotenv\Dotenv;
-$directoryPath = __DIR__ . '/../../';
-$dotenv = Dotenv::createImmutable($directoryPath);
-$dotenv->load();
-$dbHost = $_ENV['MYSQL_HOST'];
-$dbUser = $_ENV['MYSQL_USER'];
-$dbPass = $_ENV['MYSQL_ROOT_PASSWORD'];
-$dbName = $_ENV['MYSQL_DB_NAME'];
-$dbConnection = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-if ($dbConnection->connect_error) {
-    die(json_encode(array(
-        "success" => false,
-        "error" => $dbConnection->connect_error,
-        "host" => $dbHost,
-        "user" => $dbUser,
-        "database" => $dbName,
-        "directoryPath" => $directoryPath
-    )));
-}
-?>
-```
+File: [`db_connect.php`](#)
 
-Connects to the MySQL database using credentials from a `.env` file. Returns an error message if the connection fails.
+## Database Integration
+The database is connected to the back-end using PHP, and all interactions with it are done through the API. Key features of the integration:
+- **Insertions and Updates**: For example, new users can be added through the `add_user` route, and user details can be edited using the `edit_user` route.
+- **Data Fetching**: Routes like `get_temperature`, `get_sessions`, and `get_leaderboard` allow the front-end to fetch up-to-date information.
+- **Error Handling**: All database interactions are wrapped in try-catch blocks, with errors returned as JSON.
 
+## API Endpoints
+The API provides multiple endpoints that the front-end uses to interact with the database. Some of these are:
+- `api/session` (GET): Fetches all sessions grouped by date.
+- `api/users` (GET): Fetches user data for the account management tab.
+- `api/edit_user` (POST): Edits the details of a specific user.
+- `api/add_user` (POST): Adds a new user to the database.
+- `api/temperature_humidity` (GET): Fetches the historical temperature and humidity data for charting.
 
-### `get_time_registration.php`
-```php
-<?php
-require_once 'db_connect.php';
-$query = "SELECT users.UserID, users.name, users.role, cards.RFID_Tag FROM users LEFT JOIN cards ON users.UserID = cards.userID";
-$result = $dbConnection->query($query);
-if ($result->num_rows > 0) {
-    $users = array();
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
-    }
-    echo json_encode(array("success" => true, "users" => $users));
-} else {
-    echo json_encode(array("success" => false, "error" => "No users found"));
-}
-$dbConnection->close();
-?>
-```
+All API routes are designed to return JSON-formatted responses, adhering to RESTful standards, and ensuring a clean, consistent interface between the front and back ends.
 
-Fetches user data from the database, including user ID, name, role, and card ID, and returns it as a JSON response.
+## Summary
+The BeerTracker HUB project follows modern web development standards by leveraging HTML, CSS, and JavaScript for a responsive front-end, while PHP and MySQL are used for a modular, object-oriented back-end. The code is structured to ensure a clear separation of concerns, enhancing maintainability and scalability.
+
+The entire project is aimed at providing users with a seamless experience in tracking sessions, managing users, and analyzing consumption data. All aspects, from front-end UI interactions to back-end database management, are implemented following the latest best practices in the industry.
+

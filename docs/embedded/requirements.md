@@ -78,11 +78,11 @@ This document outlines the hardware *and* functional requirements for the **Smar
 
 | **Requirement ID#** | **Requirement**                                                                                                                                                      | **MoSCoW** | **Compliant** |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|---------------|
-| **EMBRQ#01**        | The embedded device acts as a client and sends measured sensor data to the application backend over HTTP or HTTPS.                                                     | MUST       | NO            |
-| **EMBRQ#02**        | The embedded device also acts as a server and receives status messages from the application backend over HTTP or HTTPS.                                                | MUST       | NO            |
-| **EMBRQ#03**        | The embedded device contains at least two types of input sensors (e.g. LDR, buttons, joystick, capacitive touch, etc.).                                                | MUST       | NO            |
-| **EMBRQ#04**        | The embedded device contains at least two types of visual and/or sensory outputs (e.g. LED, LED Matrix, 7-segment display, motor, servo, actuator, LCD-screen, buzzer, etc.). | MUST       | NO            |
-| **EMBRQ#05**        | The embedded device uses the WifiManager for configuration of SSID and password (PWD) for connecting to the network.                                                   | MUST       | NO            |
+| **EMBRQ#01**        | The embedded device acts as a client and sends measured sensor data to the application backend over HTTP or HTTPS.                                                     | MUST       | YES            |
+| **EMBRQ#02**        | The embedded device also acts as a server and receives status messages from the application backend over HTTP or HTTPS.                                                | MUST       | YES            |
+| **EMBRQ#03**        | The embedded device contains at least two types of input sensors (e.g. LDR, buttons, joystick, capacitive touch, etc.).                                                | MUST       | YES            |
+| **EMBRQ#04**        | The embedded device contains at least two types of visual and/or sensory outputs (e.g. LED, LED Matrix, 7-segment display, motor, servo, actuator, LCD-screen, buzzer, etc.). | MUST       | YES            |
+| **EMBRQ#05**        | The embedded device uses the WifiManager for configuration of SSID and password (PWD) for connecting to the network.                                                   | MUST       | YES            |
 
 ---
 
@@ -91,11 +91,37 @@ This document outlines the hardware *and* functional requirements for the **Smar
 **Requirement**: The embedded device acts as a client and sends measured sensor data to the application backend over HTTP or HTTPS.
 
 **Explanation**:  
-[Insert text explaining how you fulfilled the requirement here]
+The code uses the `HTTPClient` library to send data to the backend API. This is implemented through a function that collects temperature and humidity data from the DHT sensor and then sends it using an HTTP POST request to the server.
 
 **Code**:
 ```cpp
-// lorem ipsum
+#include <HTTPClient.h>
+#include <DHT.h>
+
+#define TEMP_SENSOR 26 // Analog Pin
+#define DHTTYPE DHT11  // DHT 11 type sensor
+
+DHT dht(TEMP_SENSOR, DHTTYPE);
+
+void sendSensorData() {
+    HTTPClient http;
+    String serverPath = "http://your-server.com/api.php";
+    
+    // Read temperature and humidity
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+
+    // Start connection and send HTTP header
+    http.begin(serverPath);
+    http.addHeader("Content-Type", "application/json");
+    
+    // Create JSON payload
+    String jsonPayload = "{"temperature": " + String(temperature) + ", "humidity": " + String(humidity) + "}";
+    int httpResponseCode = http.POST(jsonPayload);
+    
+    // End connection
+    http.end();
+}
 ```
 
 ---
@@ -105,11 +131,26 @@ This document outlines the hardware *and* functional requirements for the **Smar
 **Requirement**: The embedded device also acts as a server and receives status messages from the application backend over HTTP or HTTPS.
 
 **Explanation**:  
-[Insert text explaining how you fulfilled the requirement here]
+The code uses the `ESPAsyncWebServer` library to create an HTTP server on the ESP32. The server can receive status messages from the backend, which are processed by specific request handlers.
 
 **Code**:
 ```cpp
-// lorem ipsum
+#include <ESPAsyncWebServer.h>
+
+AsyncWebServer server(80);
+
+void setup() {
+    // Start server
+    server.on("/status", HTTP_POST, [](AsyncWebServerRequest *request) {
+        String message;
+        if (request->hasParam("status", true)) {
+            message = request->getParam("status", true)->value();
+            // Handle status update
+        }
+        request->send(200, "text/plain", "Status received");
+    });
+    server.begin();
+}
 ```
 
 ---
@@ -119,11 +160,26 @@ This document outlines the hardware *and* functional requirements for the **Smar
 **Requirement**: The embedded device contains at least two types of input sensors (e.g. LDR, buttons, joystick, capacitive touch, etc.).
 
 **Explanation**:  
-[Insert text explaining how you fulfilled the requirement here]
+The embedded device uses both an RFID sensor (`MFRC522`) and a DHT11 sensor as input devices. The RFID sensor is used to read card data, while the DHT11 sensor measures temperature and humidity.
 
 **Code**:
 ```cpp
-// lorem ipsum
+#include <MFRC522.h>
+#include <DHT.h>
+
+#define SS_PIN 5    // SDA/SS Pin for SPI
+#define RST_PIN 17  // Reset Pin for SPI
+#define TEMP_SENSOR 26 // Analog Pin
+#define DHTTYPE DHT11  // DHT 11 type sensor
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+DHT dht(TEMP_SENSOR, DHTTYPE);
+
+void setup() {
+    SPI.begin();
+    mfrc522.PCD_Init();
+    dht.begin();
+}
 ```
 
 ---
@@ -133,11 +189,28 @@ This document outlines the hardware *and* functional requirements for the **Smar
 **Requirement**: The embedded device contains at least two types of visual and/or sensory outputs (e.g. LED, LED Matrix, 7-segment display, motor, servo, actuator, LCD-screen, buzzer, etc.).
 
 **Explanation**:  
-[Insert text explaining how you fulfilled the requirement here]
+The embedded device uses an LCD display (`LiquidCrystal_I2C`) to show status messages and a buzzer for auditory feedback. The LCD provides visual output, while the buzzer is used for alerts or notifications.
 
 **Code**:
 ```cpp
-// lorem ipsum
+#include <LiquidCrystal_I2C.h>
+
+#define BUZZER_PIN 25 // Buzzer Pin
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+    lcd.init();
+    lcd.backlight();
+    pinMode(BUZZER_PIN, OUTPUT);
+    
+    // Example usage
+    lcd.setCursor(0, 0);
+    lcd.print("Welcome!");
+    digitalWrite(BUZZER_PIN, HIGH); // Sound the buzzer
+    delay(500);
+    digitalWrite(BUZZER_PIN, LOW);
+}
 ```
 
 ---
@@ -147,10 +220,17 @@ This document outlines the hardware *and* functional requirements for the **Smar
 **Requirement**: The embedded device uses the WifiManager for configuration of SSID and password (PWD) for connecting to the network.
 
 **Explanation**:  
-[Insert text explaining how you fulfilled the requirement here]
+The `WiFiManager` library is used to manage the Wi-Fi connection. If no known SSID is found, the device will start an access point, allowing the user to configure the Wi-Fi credentials via a web interface.
 
 **Code**:
 ```cpp
-// lorem ipsum
+#include <WiFiManager.h>
+
+void setup() {
+    WiFiManager wifiManager;
+    // Automatically connect using saved credentials, or start AP for configuration
+    wifiManager.autoConnect("BeertrackerAP");
+}
 ```
+
 ---
