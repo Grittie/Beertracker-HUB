@@ -67,17 +67,17 @@ class GettersHandler
     {
         $query = "
             SELECT 
-                users.UserID, 
-                users.name, 
-                users.role, 
-                cards.RFID_Tag AS card_id, 
-                sessions.SessionDate, 
-                sessions.CheckInTime
-            FROM sessions
-            LEFT JOIN users ON sessions.UserID = users.UserID
-            LEFT JOIN cards ON users.UserID = cards.userID
-            WHERE sessions.CheckInTime IS NOT NULL
-            ORDER BY sessions.SessionDate DESC, sessions.CheckInTime DESC
+                Users.UserID, 
+                Users.name, 
+                Users.role, 
+                Cards.RFID_Tag AS card_id, 
+                Sessions.SessionDate, 
+                Sessions.CheckInTime
+            FROM Sessions
+            LEFT JOIN Users ON Sessions.UserID = Users.UserID
+            LEFT JOIN Cards ON Users.UserID = Cards.userID
+            WHERE Sessions.CheckInTime IS NOT NULL
+            ORDER BY Sessions.SessionDate DESC, Sessions.CheckInTime DESC
             LIMIT 1";
 
         $result = $this->dbConnection->query($query);
@@ -199,17 +199,17 @@ class GettersHandler
     {
         $query = "
             SELECT 
-                sessions.SessionID,
-                sessions.UserID,
-                users.name,
-                DATE_FORMAT(sessions.SessionDate, '%d/%m/%Y') AS SessionDate,
-                DATE_FORMAT(sessions.CheckInTime, '%H:%i') AS CheckInTime,
-                DATE_FORMAT(sessions.CheckOutTime, '%H:%i') AS CheckOutTime,
-                sessions.TotalHours,
-                sessions.Pitchers
-            FROM sessions
-            LEFT JOIN users ON sessions.UserID = users.UserID
-            ORDER BY sessions.SessionDate ASC, sessions.CheckInTime ASC";
+                Sessions.SessionID,
+                Sessions.UserID,
+                Users.name,
+                DATE_FORMAT(Sessions.SessionDate, '%d/%m/%Y') AS SessionDate,
+                DATE_FORMAT(Sessions.CheckInTime, '%H:%i') AS CheckInTime,
+                DATE_FORMAT(Sessions.CheckOutTime, '%H:%i') AS CheckOutTime,
+                Sessions.TotalHours,
+                Sessions.Pitchers
+            FROM Sessions
+            LEFT JOIN Users ON Sessions.UserID = Users.UserID
+            ORDER BY Sessions.SessionDate ASC, Sessions.CheckInTime ASC";
 
         $result = $this->dbConnection->query($query);
 
@@ -235,12 +235,12 @@ class GettersHandler
     {
         $query = "
             SELECT 
-                users.UserID, 
-                users.name, 
-                users.role, 
+                Users.UserID, 
+                Users.name, 
+                Users.role, 
                 cards.RFID_Tag 
-            FROM users 
-            LEFT JOIN cards ON users.UserID = cards.userID";
+            FROM Users 
+            LEFT JOIN Cards ON Users.UserID = Cards.userID";
         $result = $this->dbConnection->query($query);
 
         if ($result->num_rows > 0) {
@@ -265,8 +265,8 @@ class GettersHandler
     {
         $statement = $this->dbConnection->prepare("
             SELECT u.UserID, u.name, u.role, c.RFID_Tag 
-            FROM users u 
-            LEFT JOIN cards c ON u.UserID = c.UserID
+            FROM Users u 
+            LEFT JOIN Cards c ON u.UserID = c.UserID
         ");
         $statement->execute();
         $statement->bind_result($userID, $name, $role, $rfidTag);
@@ -295,10 +295,10 @@ class GettersHandler
                 SUM(TotalHours) AS total_hours,
                 MAX(TotalHours) AS longest_session,
                 AVG(TotalHours) AS average_session,
-                (SELECT name FROM users WHERE UserID = (
-                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY COUNT(UserID) DESC LIMIT 1
+                (SELECT name FROM Users WHERE UserID = (
+                    SELECT UserID FROM Sessions GROUP BY UserID ORDER BY COUNT(UserID) DESC LIMIT 1
                 )) AS most_frequent_user
-            FROM sessions";
+            FROM Sessions";
 
         $result = $this->dbConnection->query($query);
 
@@ -318,18 +318,18 @@ class GettersHandler
                 SUM(Pitchers) AS total_pitchers,
                 SUM(Pitchers) * 14 AS total_money_spent,
                 AVG(Pitchers) AS pitchers_per_session,
-                (SELECT SessionDate FROM sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_session_date,
-                (SELECT Pitchers FROM sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_in_session,
-                (SELECT name FROM users WHERE UserID = (
-                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY SUM(Pitchers) DESC LIMIT 1
+                (SELECT SessionDate FROM Sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_session_date,
+                (SELECT Pitchers FROM Sessions ORDER BY Pitchers DESC LIMIT 1) AS most_pitchers_in_session,
+                (SELECT name FROM Users WHERE UserID = (
+                    SELECT UserID FROM Sessions GROUP BY UserID ORDER BY SUM(Pitchers) DESC LIMIT 1
                 )) AS most_pitchers,
-                (SELECT name FROM users WHERE UserID = (
-                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY SUM(Pitchers) ASC LIMIT 1
+                (SELECT name FROM Users WHERE UserID = (
+                    SELECT UserID FROM Sessions GROUP BY UserID ORDER BY SUM(Pitchers) ASC LIMIT 1
                 )) AS least_pitchers,
-                (SELECT name FROM users WHERE UserID = (
-                    SELECT UserID FROM sessions GROUP BY UserID ORDER BY COUNT(UserID) ASC LIMIT 1
+                (SELECT name FROM Users WHERE UserID = (
+                    SELECT UserID FROM Sessions GROUP BY UserID ORDER BY COUNT(UserID) ASC LIMIT 1
                 )) AS least_pitchers_most_sessions
-            FROM sessions";
+            FROM Sessions";
 
         $result = $this->dbConnection->query($query);
 
@@ -346,12 +346,12 @@ class GettersHandler
     {
         $query = "
             SELECT 
-            users.name,
+            Users.name,
             SUM(s.Pitchers) AS total_pitchers,
             COUNT(s.SessionID) AS total_sessions
-            FROM users
-            LEFT JOIN sessions s ON users.UserID = s.UserID
-            GROUP BY users.UserID, users.name
+            FROM Users
+            LEFT JOIN Sessions s ON Users.UserID = s.UserID
+            GROUP BY Users.UserID, Users.name
             ORDER BY total_pitchers DESC";
 
         $result = $this->dbConnection->query($query);

@@ -1,23 +1,13 @@
 <?php
-require_once '/var/www/html/vendor/autoload.php';
-
-use Dotenv\Dotenv;
 
 // Set the default timezone
 date_default_timezone_set('Europe/Amsterdam');
 
-// Get the directory path
-$directoryPath = __DIR__ . '/../../../';
-
-// Load the .env file
-$dotenv = Dotenv::createImmutable($directoryPath);
-$dotenv->load();
-
 // Use environment variables
-$dbHost = $_ENV['MYSQL_HOST'];
-$dbUser = $_ENV['MYSQL_USER'];
-$dbPass = $_ENV['MYSQL_ROOT_PASSWORD'];
-$dbName = $_ENV['MYSQL_DB_NAME'];
+$dbHost = "localhost";
+$dbUser = "grittie";
+$dbPass = "protector";
+$dbName = "smart_time_registration";
 
 // Make a connection to your database
 $dbConnection = new mysqli($dbHost, $dbUser, $dbPass, $dbName);

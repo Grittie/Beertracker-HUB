@@ -23,7 +23,7 @@ class SettersHandler
                 $response['message'] = 'All fields are required.';
             } else {
                 // Prepare and execute the SQL statement for the users table
-                $userStatement = $this->dbConnection->prepare("INSERT INTO users (name, role) VALUES (?, ?)");
+                $userStatement = $this->dbConnection->prepare("INSERT INTO Users (name, role) VALUES (?, ?)");
                 if ($userStatement) {
                     $userStatement->bind_param("ss", $name, $role);
                     if ($userStatement->execute()) {
@@ -31,7 +31,7 @@ class SettersHandler
                         $userId = $userStatement->insert_id;
 
                         // Now insert the RFID tag into the cards table
-                        $cardStatement = $this->dbConnection->prepare("INSERT INTO cards (UserID, RFID_Tag) VALUES (?, ?)");
+                        $cardStatement = $this->dbConnection->prepare("INSERT INTO Cards (UserID, RFID_Tag) VALUES (?, ?)");
                         if ($cardStatement) {
                             $cardStatement->bind_param("is", $userId, $rfid_tag);
                             if ($cardStatement->execute()) {
@@ -68,8 +68,8 @@ class SettersHandler
         if ($userID && $name && $role && $rfidTag) {
             // Prepare the statement to update the user and RFID tag
             $statement = $this->dbConnection->prepare("
-                UPDATE users u
-                LEFT JOIN cards c ON u.UserID = c.UserID
+                UPDATE Users u
+                LEFT JOIN Cards c ON u.UserID = c.UserID
                 SET u.name = ?, u.role = ?, c.RFID_Tag = ?
                 WHERE u.UserID = ?
             ");
@@ -95,7 +95,7 @@ class SettersHandler
 
         if ($userID) {
             // Prepare the statement to delete the user
-            $statement = $this->dbConnection->prepare("DELETE FROM users WHERE UserID = ?");
+            $statement = $this->dbConnection->prepare("DELETE FROM Users WHERE UserID = ?");
             $statement->bind_param('i', $userID);
 
             if ($statement->execute()) {

@@ -74,7 +74,7 @@ function fetchConnectionStatus() {
         .then(data => {
             const connectionStatus = document.getElementById('database-connection');
             if (data.success) {
-                connectionStatus.innerHTML = `successful (Fetching .env from ${data.directoryPath})`;
+                connectionStatus.innerHTML = `successful (Fetching .env)`;
                 connectionStatus.className = "success";
             } else {
                 connectionStatus.innerHTML = `failed: ${data.error} (Host: ${data.host}, User: ${data.user}, Database: ${data.database}, Fetching .env from ${data.directoryPath})`;
@@ -759,18 +759,19 @@ function updatePitcherConsumptionChart(labels, consumption, sessions) {
 // Function to create the temperature and humidity chart
 document.getElementById('reset-btn').addEventListener('click', function() {
     if (esp32IpAddress) {
-        fetch(`http://${esp32IpAddress}/reset`, { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    alert("ESP32 is resetting...");
-                } else {
-                    alert("Failed to send reset command.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Failed to connect to ESP32.");
-            });
+        // Open the reset URL in a new tab
+        const resetWindow = window.open(`http://${esp32IpAddress}/reset`, '_blank');
+
+        // Check if the window was successfully opened
+        if (resetWindow) {
+            // Close the tab after a 0.5-second delay
+            setTimeout(() => {
+                resetWindow.close();
+                alert("ESP32 is resetting...");
+            }, 10); // 500 milliseconds
+        } else {
+            alert("Failed to open the reset command in a new tab. Please allow pop-ups.");
+        }
     } else {
         alert("ESP32 IP address is not available.");
     }
