@@ -100,7 +100,7 @@ unsigned long lastReconnectAttempt = 0;        // Global variable to track last 
 const unsigned long reconnectInterval = 10000; // Interval to try reconnecting (in milliseconds)
 
 // Server IP
-String serverIP = "http://192.168.95.171";
+String serverIP = "https://beertracker-hub.grit.gay";
 
 // Menu variables
 volatile int currentMenuOption = -1;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
