@@ -21,7 +21,12 @@ jobs:
           python-version: '3.x'
 
       - name: Add mdocotion to PYTHONPATH
-        run: echo "PYTHONPATH=\$PYTHONPATH:\$(pwd)/mdocotion" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=\$PYTHONPATH:$(pwd)/mdocotion" >> $GITHUB_ENV
+
+      - name: Debug PYTHONPATH and Check Module
+        run: |
+          echo $PYTHONPATH
+          ls $(pwd)/mdocotion/mkdocs_macros_mdocotion
 
       - name: Install dependencies
         run: |
