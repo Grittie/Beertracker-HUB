@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository with submodules
         uses: actions/checkout@v4
         with:
-          submodules: recursive  # Ensure submodules are cloned
+          submodules: recursive  # Ensures all submodules are cloned
 
       - name: Set up Python
         uses: actions/setup-python@v4
