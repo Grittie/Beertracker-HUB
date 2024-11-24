@@ -3,18 +3,20 @@ name: Deploy MkDocs to GitHub Pages
 on:
   push:
     branches:
-      - main  # Replace with your default branch if not "main"
+      - main
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4  # Updated to the latest version
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive  # Ensure submodules are cloned
 
       - name: Set up Python
-        uses: actions/setup-python@v4  # Latest version compatible with Node.js 20
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
