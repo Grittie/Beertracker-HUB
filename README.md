@@ -59,3 +59,6 @@ The database is a MySQL database using MariaDB. You can connect to it using the 
 | Username | `root` |
 | Password | You can find this in your .env-file. |
 | Database | You need to create the database yourself. |
+
+## Pages
+// add pages link here.
