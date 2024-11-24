@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Add mdocotion to PYTHONPATH
+        run: echo "PYTHONPATH=\$PYTHONPATH:\$(pwd)/mdocotion" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: |
           pip install mkdocs-material
