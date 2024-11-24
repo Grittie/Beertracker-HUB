@@ -61,4 +61,4 @@ The database is a MySQL database using MariaDB. You can connect to it using the 
 | Database | You need to create the database yourself. |
 
 ## Pages
-// add pages link here.
+The documentation github page can be found [here](https://grittie.github.io/Beertracker-HUB/)
