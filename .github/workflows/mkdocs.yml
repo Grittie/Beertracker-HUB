@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install mkdocs-material
-          pip install mkdocs-awesome-pages-plugin mkdocs-video-plugin mkdocs-mermaid2-plugin mkdocs-section-index mkdocs-autolinks-plugin mkdocs-macros-plugin pymdown-extensions
+          pip install mkdocs-awesome-pages-plugin mkdocs-mermaid2-plugin mkdocs-section-index mkdocs-autolinks-plugin mkdocs-macros-plugin pymdown-extensions
 
       - name: Deploy MkDocs to GitHub Pages
         run: |
