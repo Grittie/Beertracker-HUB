@@ -6,6 +6,7 @@ nav:
       - Requirements: embedded/requirements
       - Technical documentation: embedded/technical_documentation
       - Code: embedded/code
+      - Authentication: embedded/authentication
     - 🌐 Web:
       - Technical documentation: web/technical_documentation
       - API reference: web/api_reference
