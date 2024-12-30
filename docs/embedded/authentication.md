@@ -1,4 +1,4 @@
-# Authentication for the PlatformIO Project
+# Authentication
 
 ## Configuration Header File
 This project uses a `config.h` file to store sensitive credentials such as API usernames and passwords. This file is required for the project to build and run successfully.
