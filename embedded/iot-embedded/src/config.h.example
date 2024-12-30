@@ -1,0 +1,8 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define API_USERNAME ""
+#define API_PASSWORD ""
+#define SERVER_URL ""
+
+#endif

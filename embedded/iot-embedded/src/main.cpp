@@ -56,6 +56,8 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
+#include <base64.h>
+#include "config.h"
 
 // Pin definitions
 // SPI Pins
@@ -100,7 +102,7 @@ unsigned long lastReconnectAttempt = 0;        // Global variable to track last 
 const unsigned long reconnectInterval = 10000; // Interval to try reconnecting (in milliseconds)
 
 // Server IP
-String serverIP = "https://beertracker-hub.grit.gay";
+String serverIP = SERVER_URL;
 
 // Menu variables
 volatile int currentMenuOption = -1;                                   // Track the current menu option (0 = Clock In, 1 = Clock Out, 2 = Add Pitcher)
@@ -445,6 +447,10 @@ void sendDataToAPI(String dataType, String data1, String data2)
 
     http.begin(serverIP + "/api/" + dataType);                               // Specify the URL of the API endpoint
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the POST content type
+
+    // Add Basic Authorization Header
+    String credentials = base64::encode(String(API_USERNAME) + ":" + String(API_PASSWORD));
+    http.addHeader("Authorization", "Basic " + credentials);
 
     String postData = "";
 
