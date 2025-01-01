@@ -7,7 +7,7 @@
 	(title_block
 		(title "Beertracker HUB PCB")
 		(date "30/12/2024")
-		(rev "1.0")
+		(rev "1.1")
 		(company "Beertracker")
 	)
 	(lib_symbols
@@ -3035,7 +3035,7 @@
 		(uuid "f78766a5-d0d1-474f-9174-669133ab89d2")
 	)
 	(no_connect
-		(at 102.87 76.2)
+		(at 102.87 86.36)
 		(uuid "fa609f3c-5a99-4e4a-b56e-9a1b1b797668")
 	)
 	(wire
@@ -3237,16 +3237,6 @@
 			(type default)
 		)
 		(uuid "3b62c910-c253-479f-bbb2-fa94b5b562b5")
-	)
-	(wire
-		(pts
-			(xy 105.41 109.22) (xy 105.41 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3bdd559f-f917-4420-88e8-783379785899")
 	)
 	(wire
 		(pts
@@ -3500,6 +3490,26 @@
 	)
 	(wire
 		(pts
+			(xy 105.41 109.22) (xy 105.41 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7f7318e1-59f1-4290-9a4b-a6ca44c637b9")
+	)
+	(wire
+		(pts
+			(xy 54.61 109.22) (xy 105.41 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7f8cd778-f1ef-4bb9-9471-08fc25ad5759")
+	)
+	(wire
+		(pts
 			(xy 54.61 60.96) (xy 54.61 31.75)
 		)
 		(stroke
@@ -3660,6 +3670,16 @@
 	)
 	(wire
 		(pts
+			(xy 105.41 76.2) (xy 102.87 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7bd75fb-9e15-4c2d-824f-e72fd3a2c572")
+	)
+	(wire
+		(pts
 			(xy 104.14 43.18) (xy 102.87 43.18)
 		)
 		(stroke
@@ -3790,16 +3810,6 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 109.22) (xy 105.41 109.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d8a84c76-ce05-4412-ae9b-0f7249f0c19e")
-	)
-	(wire
-		(pts
 			(xy 152.4 120.65) (xy 152.4 99.06)
 		)
 		(stroke
@@ -3860,13 +3870,13 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 86.36) (xy 102.87 86.36)
+			(xy 54.61 76.2) (xy 54.61 109.22)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e58ae55a-cedd-4ea0-845e-6ac349a1ec38")
+		(uuid "e451af8e-451a-4a2a-a8ae-1ef31535eb1e")
 	)
 	(wire
 		(pts
@@ -3937,16 +3947,6 @@
 			(type default)
 		)
 		(uuid "f87c8285-b03b-4a9e-9e25-74ccfc1bbf38")
-	)
-	(wire
-		(pts
-			(xy 54.61 76.2) (xy 54.61 109.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fb32898f-4625-4a0e-a23d-44864bdb3b70")
 	)
 	(wire
 		(pts

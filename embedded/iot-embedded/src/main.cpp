@@ -48,7 +48,6 @@
 #include <WiFiManager.h>
 #include <Arduino.h>
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <MFRC522.h>
 #include <DHT.h>
@@ -58,6 +57,7 @@
 #include <ESPAsyncWebServer.h>
 #include <base64.h>
 #include "config.h"
+#include <U8g2lib.h>
 
 // Pin definitions
 // SPI Pins
@@ -85,8 +85,8 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance
 DHT dht(TEMP_SENSOR, DHTTYPE);    // Create DHT instance
 
-// Set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+// Initialize the OLED display using U8g2
+U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 22, /* data=*/ 21);
 
 // Create an instance of the server
 AsyncWebServer server(80);
@@ -121,6 +121,7 @@ void menuTask(void *pvParameters);
 void heartbeatTask(void *pvParameters);
 void addressTask(void *pvParameters);
 void httpServerTask(void *pvParameters);
+void displayMenu(const char *line1, const char *line2);
 
 void setup()
 {
@@ -182,22 +183,19 @@ void setup()
   delay(100);            // Delay 100ms
   noTone(BUZZER_PIN);
 
-  // Initialize the LCD
-  lcd.init();
-  lcd.backlight();
-  lcd.setBacklight(HIGH);
+  u8g2.begin(); // Initialize OLED
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_6x10_tf);
+  u8g2.drawStr(0, 10, "Beertracker HUB");
+  u8g2.drawStr(0, 30, "Initializing...");
+  u8g2.sendBuffer();
+  delay(2000);
 
-  // Beertracker HUB on LCD
-  lcd.setCursor(0, 0);
-  lcd.print("Beertracker HUB");
-  lcd.setCursor(0, 1);
-  lcd.print("Initializing...");
-  delay(1000);
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Select option");
-  lcd.setCursor(0, 1);
-  lcd.print("Press buttons");
+  // Clear display and prompt for menu
+  u8g2.clearBuffer();
+  u8g2.drawStr(0, 10, "Select option");
+  u8g2.drawStr(0, 30, "Press button.");
+  u8g2.sendBuffer();
 
   // Multithreading setup for RFID and feedback tasks
   xTaskCreate(rfidTask, "RFID Task", 10000, NULL, 1, NULL);               // Task for RFID scanning
@@ -211,6 +209,15 @@ void setup()
 
 void loop()
 {
+}
+
+void displayMenu(const char *line1, const char *line2)
+{
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_6x10_tf);
+  u8g2.drawStr(0, 10, line1);
+  u8g2.drawStr(0, 30, line2);
+  u8g2.sendBuffer();
 }
 
 // Task to continuously scan for RFID cards
@@ -324,11 +331,7 @@ void menuTask(void *pvParameters)
     if (menuUpdated)
     {
       tone(BUZZER_PIN, 1000); // Play a tone to indicate menu change
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Option:");
-      lcd.setCursor(0, 1);
-      lcd.print(menuOptions[currentMenuOption]);
+      displayMenu("Option:", menuOptions[currentMenuOption]);
       vTaskDelay(100);
       noTone(BUZZER_PIN);
 
@@ -341,13 +344,10 @@ void menuTask(void *pvParameters)
     // Check if selection is active and duration has passed
     if (selectionActive && (millis() - lastSelectionTime >= selectionDisplayDuration))
     {
-      lcd.clear();
+      u8g2.clearBuffer();
       vTaskDelay(250);             // Clear the LCD after the duration
       // Display selected option on the LCD
-      lcd.setCursor(0, 0);
-      lcd.print("Selected:");
-      lcd.setCursor(0, 1);
-      lcd.print(menuOptions[currentMenuOption]);
+      displayMenu("Selected:", menuOptions[currentMenuOption]);
       readyToScan = true; // Set flag to indicate ready to scan
       selectionActive = false; // Reset selection state
     }
@@ -468,14 +468,14 @@ void sendDataToAPI(String dataType, String data1, String data2)
       if (needToSelect == 1)
       {
         Serial.println("No option selected");
-        // Show on the LCD that they have to select an option
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("No option selected");
-        lcd.setCursor(0, 1);
-        lcd.print("Press buttons");
-        delay(2000); // Wait 2 seconds
-        lcd.clear();
+        u8g2.clearBuffer();
+        u8g2.setFont(u8g2_font_6x10_tf);
+        u8g2.drawStr(0, 10, "No option selected");
+        u8g2.drawStr(0, 30, "Press buttons");
+        u8g2.sendBuffer();
+        delay(2000);
+        u8g2.clearBuffer();
+        u8g2.sendBuffer();
       } else {
         postData = "uid=" + data1 + "&option=" + data2;
         // Reset selected option after sending the card data
@@ -523,32 +523,30 @@ void sendDataToAPI(String dataType, String data1, String data2)
             Serial.print("Username: ");
             Serial.println(userName);
 
-            // Display the username on the LCD
-            lcd.clear();
+            // Display the username on the OLED
+            u8g2.clearBuffer();
+            u8g2.setFont(u8g2_font_6x10_tf);
             if (currentMenuOption == 0)
-            { // Clock In
-              lcd.print("Welcome,");
+            {
+              u8g2.drawStr(0, 10, "Welcome,");
             }
             else if (currentMenuOption == 1)
-            { // Clock Out
-              lcd.print("Bye,");
+            {
+              u8g2.drawStr(0, 10, "Bye,");
             }
             else if (currentMenuOption == 2)
-            { // Add Pitcher
-              lcd.print("+1 Pitcher,");
+            {
+              u8g2.drawStr(0, 10, "+1 Pitcher,");
             }
-            lcd.setCursor(0, 1);
-            lcd.print(userName); // Display the username on the second line
+            u8g2.drawStr(0, 30, userName);
+            u8g2.sendBuffer();
 
-            // Keep the text visible for a short period
-            delay(2000); // Wait 2 seconds
-            lcd.clear();
+            delay(2000);
 
-            // Show Beertracker HUB on LCD and select option
-            lcd.setCursor(0, 0);
-            lcd.print("Beertracker HUB");
-            lcd.setCursor(0, 1);
-            lcd.print("Select option");
+            u8g2.clearBuffer();
+            u8g2.drawStr(0, 10, "Beertracker HUB");
+            u8g2.drawStr(0, 30, "Select option");
+            u8g2.sendBuffer();
           }
           else
           {
@@ -558,100 +556,85 @@ void sendDataToAPI(String dataType, String data1, String data2)
 
             if (strcmp(message, "Card not found") == 0)
             {
-              // Say card not found on the LCD
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("Card not found");
-              lcd.setCursor(0, 1);
-              lcd.print("Add card to acc");
-              delay(2000); // Wait 2 seconds
-          
-              // Show cardUID on lcd
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("Card UID:");
-              lcd.setCursor(0, 1);
-              lcd.print(cardUID);
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "Card not found");
+              u8g2.drawStr(0, 30, "Add card to acc");
+              u8g2.sendBuffer();
+              delay(2000);
+
+              u8g2.clearBuffer();
+              u8g2.drawStr(0, 10, "Card UID:");
+              u8g2.drawStr(0, 30, cardUID.c_str());
+              u8g2.sendBuffer();
             }
 
             if (strcmp(message, "Invalid type or missing data") == 0)
             {
-              // Show Beertracker HUB on LCD and select option
-              lcd.setCursor(0, 0);
-              lcd.print("Beertracker HUB");
-              lcd.setCursor(0, 1);
-              lcd.print("Select option");
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "Beertracker HUB");
+              u8g2.drawStr(0, 30, "Select option");
+              u8g2.sendBuffer();
             }
 
             if (strcmp(message, "User not checked in") == 0)
             {
-              // Say user not checked in on the LCD
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("User not");
-              lcd.setCursor(0, 1);
-              lcd.print("checked in");
-              delay(2000); // Wait 2 seconds
-              lcd.clear();
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "User not");
+              u8g2.drawStr(0, 30, "checked in");
+              u8g2.sendBuffer();
+              delay(2000);
 
-              // Show Beertracker HUB on LCD and select option
-              lcd.setCursor(0, 0);
-              lcd.print("Beertracker HUB");
-              lcd.setCursor(0, 1);
-              lcd.print("Select option");
+              u8g2.clearBuffer();
+              u8g2.drawStr(0, 10, "Beertracker HUB");
+              u8g2.drawStr(0, 30, "Select option");
+              u8g2.sendBuffer();
             }
 
             if (strcmp(message, "User already checked in") == 0)
             {
-              // Say user already checked in on the LCD
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("User already");
-              lcd.setCursor(0, 1);
-              lcd.print("checked in");
-              delay(2000); // Wait 2 seconds
-              lcd.clear();
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "User already");
+              u8g2.drawStr(0, 30, "checked in");
+              u8g2.sendBuffer();
+              delay(2000);
 
-              // Show Beertracker HUB on LCD and select option
-              lcd.setCursor(0, 0);
-              lcd.print("Beertracker HUB");
-              lcd.setCursor(0, 1);
-              lcd.print("Select option");
+              u8g2.clearBuffer();
+              u8g2.drawStr(0, 10, "Beertracker HUB");
+              u8g2.drawStr(0, 30, "Select option");
+              u8g2.sendBuffer();
             }
 
             if (strcmp(message, "User already checked out") == 0)
             {
-              // Say user already checked out on the LCD
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("User already");
-              lcd.setCursor(0, 1);
-              lcd.print("checked out");
-              delay(2000); // Wait 2 seconds
-              lcd.clear();
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "User already");
+              u8g2.drawStr(0, 30, "checked out");
+              u8g2.sendBuffer();
+              delay(2000);
 
-              // Show Beertracker HUB on LCD and select option
-              lcd.setCursor(0, 0);
-              lcd.print("Beertracker HUB");
-              lcd.setCursor(0, 1);
-              lcd.print("Select option");
+              u8g2.clearBuffer();
+              u8g2.drawStr(0, 10, "Beertracker HUB");
+              u8g2.drawStr(0, 30, "Select option");
+              u8g2.sendBuffer();
             }
 
             if (strcmp(message, "User already checked out, cannot add pitcher") == 0) {
-              // Say user already checked out on the LCD
-              lcd.clear();
-              lcd.setCursor(0, 0);
-              lcd.print("No pitcher");
-              lcd.setCursor(0, 1);
-              lcd.print("User checkd out");
-              delay(2000); // Wait 2 seconds
-              lcd.clear();
+              u8g2.clearBuffer();
+              u8g2.setFont(u8g2_font_6x10_tf);
+              u8g2.drawStr(0, 10, "No pitcher");
+              u8g2.drawStr(0, 30, "User checked out");
+              u8g2.sendBuffer();
+              delay(2000);
 
-              // Show Beertracker HUB on LCD and select option
-              lcd.setCursor(0, 0);
-              lcd.print("Beertracker HUB");
-              lcd.setCursor(0, 1);
-              lcd.print("Select option");
+              u8g2.clearBuffer();
+              u8g2.drawStr(0, 10, "Beertracker HUB");
+              u8g2.drawStr(0, 30, "Select option");
+              u8g2.sendBuffer();
             }
           }
         }
@@ -659,11 +642,13 @@ void sendDataToAPI(String dataType, String data1, String data2)
         {
           Serial.println("Failed to parse response");
           // Handle parsing error
-          lcd.clear();
-          lcd.setCursor(0, 0);
-          lcd.print("Parse Error");
-          delay(2000); // Wait 2 seconds
-          lcd.clear();
+          u8g2.clearBuffer();
+          u8g2.setFont(u8g2_font_6x10_tf);
+          u8g2.drawStr(0, 10, "Parse Error");
+          u8g2.sendBuffer();
+          delay(2000);
+          u8g2.clearBuffer();
+          u8g2.sendBuffer();
         }
       }
     }
@@ -671,14 +656,15 @@ void sendDataToAPI(String dataType, String data1, String data2)
     {
       Serial.print("Error on sending POST: ");
       Serial.println(httpResponseCode);
-      // Display error on the LCD
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("HTTP Error:");
-      lcd.setCursor(0, 1);
-      lcd.print(httpResponseCode);
-      delay(2000); // Wait 2 seconds
-      lcd.clear();
+      // Display error on the OLED
+      u8g2.clearBuffer();
+      u8g2.setFont(u8g2_font_6x10_tf);
+      u8g2.drawStr(0, 10, "HTTP Error:");
+      u8g2.drawStr(0, 30, String(httpResponseCode).c_str());
+      u8g2.sendBuffer();
+      delay(2000);
+      u8g2.clearBuffer();
+      u8g2.sendBuffer();
     }
 
     http.end(); // End the HTTP connection to free up resources
@@ -689,13 +675,14 @@ void sendDataToAPI(String dataType, String data1, String data2)
     // Turn off the LED
     digitalWrite(CONNECTION_LED, LOW);
 
-    // Display WiFi error on the LCD
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("WiFi Error");
-    lcd.setCursor(0, 1);
-    lcd.print("Not connected");
-    delay(2000); // Wait 2 seconds
-    lcd.clear();
+    // Display WiFi error on the OLED
+    u8g2.clearBuffer();
+    u8g2.setFont(u8g2_font_6x10_tf);
+    u8g2.drawStr(0, 10, "WiFi Error");
+    u8g2.drawStr(0, 30, "Not connected");
+    u8g2.sendBuffer();
+    delay(2000);
+    u8g2.clearBuffer();
+    u8g2.sendBuffer();
   }
 }
