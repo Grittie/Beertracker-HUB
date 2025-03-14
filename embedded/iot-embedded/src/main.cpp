@@ -100,7 +100,7 @@ void setup() {
     u8g2.clearBuffer();
     u8g2.drawStr(0, 10, "WiFi Connected!");
     u8g2.sendBuffer();
-    delay(2000);
+    delay(1000);
 
     // Play startup sound
     tone(BUZZER_PIN, 1000);
@@ -153,8 +153,8 @@ void rfidTask(void *pvParameters) {
             http.begin(serverIP + "/api/card");
             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            String credentials = base64::encode(String(API_USERNAME) + ":" + String(API_PASSWORD));
-            http.addHeader("Authorization", "Basic " + credentials);
+            // String credentials = base64::encode(String(API_USERNAME) + ":" + String(API_PASSWORD));
+            // http.addHeader("Authorization", "Basic " + credentials);
 
             String postData = "uid=" + cardUID + "&option=0"; // Check clock-in status
             int httpResponseCode = http.POST(postData);
@@ -204,11 +204,11 @@ void rfidTask(void *pvParameters) {
                     } else if (strcmp(status, "error") == 0) {
                         if (strcmp(message, "User already checked in") == 0) {
                             // User is already clocked in, add a pitcher
-                            Serial.println("+1 Pitcher for user: " + cardUID);
+                            Serial.println("+1 Pitcher: " + cardUID);
                             u8g2.clearBuffer();
                             u8g2.setFont(u8g2_font_6x10_tf);
                             u8g2.drawStr(0, 10, "+1 Pitcher,");
-                            u8g2.drawStr(0, 30, "Thank you! :)");
+                            u8g2.drawStr(0, 30, "Registering...");
                             u8g2.sendBuffer();
 
                             // Play "ta ta ta daaa" sound
@@ -226,7 +226,7 @@ void rfidTask(void *pvParameters) {
                             String postData = "uid=" + cardUID + "&option=2";
                             http.begin(serverIP + "/api/card");
                             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                            http.addHeader("Authorization", "Basic " + credentials);
+                            // http.addHeader("Authorization", "Basic " + credentials);
                             int httpResponseCode = http.POST(postData);
 
                             if (httpResponseCode > 0) {
@@ -241,8 +241,8 @@ void rfidTask(void *pvParameters) {
                                 int newPitcherCount = doc["newPitcherCount"];
 
                                 // Prepare display content
-                                String line1 = String(name) + " is now on";
-                                String line2 = String(newPitcherCount) + " pitchers today!";
+                                String line1 = String(name);
+                                String line2 = String(newPitcherCount) + " pitchers today";
 
                                 // Display on OLED
                                 u8g2.clearBuffer();
@@ -252,7 +252,7 @@ void rfidTask(void *pvParameters) {
                                 u8g2.sendBuffer();
 
                                 // Delay to show the message
-                                vTaskDelay(1000 / portTICK_PERIOD_MS);
+                                vTaskDelay(500 / portTICK_PERIOD_MS);
                             } else {
                                 Serial.println("Failed to parse JSON response");
                             }
@@ -260,7 +260,7 @@ void rfidTask(void *pvParameters) {
                             Serial.println("Error incrementing pitcher: " + String(httpResponseCode));
                         }
                             // wait for 2 seconds before clearing the display
-                            vTaskDelay(1000 / portTICK_PERIOD_MS);
+                            vTaskDelay(500 / portTICK_PERIOD_MS);
                             u8g2.clearBuffer();
                             u8g2.setFont(u8g2_font_6x10_tf);
                             u8g2.drawStr(0, 10, "Beertracker");
@@ -356,8 +356,8 @@ void sendDataToAPI(String dataType, String data1, String data2) {
         http.begin(serverIP + "/api/" + dataType);
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        String credentials = base64::encode(String(API_USERNAME) + ":" + String(API_PASSWORD));
-        http.addHeader("Authorization", "Basic " + credentials);
+        // String credentials = base64::encode(String(API_USERNAME) + ":" + String(API_PASSWORD));
+        // http.addHeader("Authorization", "Basic " + credentials);
 
         String postData;
         if (dataType == "temperature") {
