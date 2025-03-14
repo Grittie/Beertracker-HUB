@@ -112,7 +112,7 @@ void setup() {
     u8g2.drawStr(0, 10, "Beertracker HUB");
     u8g2.drawStr(0, 30, "Initializing...");
     u8g2.sendBuffer();
-    delay(2000);
+    delay(100);
     u8g2.clearBuffer();
 
     // Start tasks
@@ -193,8 +193,8 @@ void rfidTask(void *pvParameters) {
                             vTaskDelay(300 / portTICK_PERIOD_MS);
                             noTone(BUZZER_PIN);
 
-                            // wait for 2 seconds before clearing the display
-                            vTaskDelay(2000 / portTICK_PERIOD_MS);
+                            // wait for 1 second1 before clearing the display
+                            vTaskDelay(1000 / portTICK_PERIOD_MS);
                             u8g2.clearBuffer();
                             u8g2.setFont(u8g2_font_6x10_tf);
                             u8g2.drawStr(0, 10, "Beertracker");
@@ -252,7 +252,7 @@ void rfidTask(void *pvParameters) {
                                 u8g2.sendBuffer();
 
                                 // Delay to show the message
-                                vTaskDelay(2000 / portTICK_PERIOD_MS);
+                                vTaskDelay(1000 / portTICK_PERIOD_MS);
                             } else {
                                 Serial.println("Failed to parse JSON response");
                             }
@@ -260,7 +260,7 @@ void rfidTask(void *pvParameters) {
                             Serial.println("Error incrementing pitcher: " + String(httpResponseCode));
                         }
                             // wait for 2 seconds before clearing the display
-                            vTaskDelay(2000 / portTICK_PERIOD_MS);
+                            vTaskDelay(1000 / portTICK_PERIOD_MS);
                             u8g2.clearBuffer();
                             u8g2.setFont(u8g2_font_6x10_tf);
                             u8g2.drawStr(0, 10, "Beertracker");
